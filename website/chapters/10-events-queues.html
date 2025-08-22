@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 10-events-queues: Events & Queues - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 10-events-queues: Events & Queues</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-tasks"></i> Chapter 10-events-queues: Events & Queues
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-10-events-queues">Chapter 10: Events &amp; Queues</h1>
+<h2 id="what-are-events">What are Events?</h2>
+<p>Events in Laravel provide a simple observer pattern implementation that allows you to subscribe and listen for various events that occur in your application. Events are great for decoupling various aspects of your application, since a single event can have multiple listeners that do not depend on each other.</p>
+<h2 id="creating-events">Creating Events</h2>
+<h3 id="using-artisan-command">Using Artisan Command</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create event</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:event<span class="w"> </span>UserRegistered
+
+<span class="c1"># Create event with model</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:event<span class="w"> </span>UserRegistered<span class="w"> </span>--model<span class="o">=</span>User
+</code></pre></div>
+
+<h3 id="basic-event-structure">Basic Event Structure</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Events</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\Channel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\InteractsWithSockets</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\PresenceChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\PrivateChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Broadcasting\ShouldBroadcast</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Events\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserRegistered</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithSockets</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Create a new event instance.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Get the channels the event should broadcast on.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @return array&lt;int, \Illuminate\Broadcasting\Channel&gt;</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">broadcastOn</span><span class="p">()</span><span class="o">:</span> <span class="k">array</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="k">new</span> <span class="nx">PrivateChannel</span><span class="p">(</span><span class="s1">&#39;channel-name&#39;</span><span class="p">),</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="broadcasting-events">Broadcasting Events</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Events</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\Channel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\InteractsWithSockets</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\PresenceChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Broadcasting\PrivateChannel</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Broadcasting\ShouldBroadcast</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Events\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserStatusChanged</span> <span class="k">implements</span> <span class="nx">ShouldBroadcast</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithSockets</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$status</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nv">$status</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">status</span> <span class="o">=</span> <span class="nv">$status</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">broadcastOn</span><span class="p">()</span><span class="o">:</span> <span class="k">array</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="k">new</span> <span class="nx">PrivateChannel</span><span class="p">(</span><span class="s1">&#39;user.&#39;</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">),</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">broadcastAs</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;user.status.changed&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">broadcastWith</span><span class="p">()</span><span class="o">:</span> <span class="k">array</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s1">&#39;user_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+            <span class="s1">&#39;status&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">status</span><span class="p">,</span>
+            <span class="s1">&#39;timestamp&#39;</span> <span class="o">=&gt;</span> <span class="nx">now</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">toISOString</span><span class="p">(),</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="creating-listeners">Creating Listeners</h2>
+<h3 id="using-artisan-command_1">Using Artisan Command</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create listener</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:listener<span class="w"> </span>SendWelcomeEmail
+
+<span class="c1"># Create listener for specific event</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:listener<span class="w"> </span>SendWelcomeEmail<span class="w"> </span>--event<span class="o">=</span>UserRegistered
+</code></pre></div>
+
+<h3 id="basic-listener-structure">Basic Listener Structure</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Listeners</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendWelcomeEmail</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">InteractsWithQueue</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$tries</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$timeout</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Create the event listener.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">//</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Handle the event.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Send welcome email to the user</span>
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">WelcomeEmail</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Handle a job failure.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">failed</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">,</span> <span class="nx">\Throwable</span> <span class="nv">$exception</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Handle the failure</span>
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;Failed to send welcome email&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;user_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+            <span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="nv">$exception</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">(),</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="queueable-listeners">Queueable Listeners</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Listeners</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendWelcomeEmail</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">InteractsWithQueue</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$connection</span> <span class="o">=</span> <span class="s1">&#39;redis&#39;</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$queue</span> <span class="o">=</span> <span class="s1">&#39;emails&#39;</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$delay</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span> <span class="c1">// Delay in seconds</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// This will be queued</span>
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">WelcomeEmail</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="registering-events-and-listeners">Registering Events and Listeners</h2>
+<h3 id="in-eventserviceprovider">In EventServiceProvider</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Providers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listeners\SendWelcomeEmail</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listeners\CreateUserProfile</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Listeners\SendAdminNotification</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Support\Providers\EventServiceProvider</span> <span class="k">as</span> <span class="nx">ServiceProvider</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">EventServiceProvider</span> <span class="k">extends</span> <span class="nx">ServiceProvider</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * The event to listener mappings for the application.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array&lt;class-string, array&lt;int, class-string&gt;&gt;</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$listen</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">UserRegistered</span><span class="o">::</span><span class="na">class</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="nx">SendWelcomeEmail</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+            <span class="nx">CreateUserProfile</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+            <span class="nx">SendAdminNotification</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+        <span class="p">],</span>
+
+        <span class="s1">&#39;Illuminate\Auth\Events\Login&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;App\Listeners\LogSuccessfulLogin&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+
+        <span class="s1">&#39;Illuminate\Auth\Events\Failed&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;App\Listeners\LogFailedLogin&#39;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Register any events for your application.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">boot</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="k">parent</span><span class="o">::</span><span class="na">boot</span><span class="p">();</span>
+
+        <span class="c1">// Register events using wildcards</span>
+        <span class="nx">Event</span><span class="o">::</span><span class="na">listen</span><span class="p">(</span><span class="s1">&#39;user.*&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$eventName</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Log</span><span class="o">::</span><span class="na">info</span><span class="p">(</span><span class="s2">&quot;User event: </span><span class="si">{</span><span class="nv">$eventName</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="dispatching-events">Dispatching Events</h2>
+<h3 id="using-event-facade">Using Event Facade</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use App\Events\UserRegistered;</span>
+<span class="x">use Illuminate\Support\Facades\Event;</span>
+
+<span class="x">// Dispatch event</span>
+<span class="x">Event::dispatch(new UserRegistered($user));</span>
+
+<span class="x">// Or use the event class directly</span>
+<span class="x">UserRegistered::dispatch($user);</span>
+</code></pre></div>
+
+<h3 id="in-controllers">In Controllers</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validated</span><span class="p">());</span>
+
+        <span class="c1">// Dispatch event</span>
+        <span class="nx">UserRegistered</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;users.show&#39;</span><span class="p">,</span> <span class="nv">$user</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="in-models">In Models</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="nv">$dispatchesEvents</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;created&#39;</span> <span class="o">=&gt;</span> <span class="nx">UserRegistered</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="c1">// Or manually in the model</span>
+    <span class="k">protected</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">booted</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">static</span><span class="o">::</span><span class="na">created</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">UserRegistered</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="k">static</span><span class="o">::</span><span class="na">updated</span><span class="p">(</span><span class="k">function</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">UserStatusChanged</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$user</span><span class="p">,</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">status</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="event-subscribers">Event Subscribers</h2>
+<h3 id="creating-subscribers">Creating Subscribers</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:listener<span class="w"> </span>UserEventSubscriber
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Listeners</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Events\UserUpdated</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Events\UserDeleted</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Events\Dispatcher</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserEventSubscriber</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handleUserRegistered</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Handle user registered event</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handleUserUpdated</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Handle user updated event</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handleUserDeleted</span><span class="p">(</span><span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Handle user deleted event</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">subscribe</span><span class="p">(</span><span class="nx">Dispatcher</span> <span class="nv">$events</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$events</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span>
+            <span class="nx">UserRegistered</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+            <span class="p">[</span><span class="nx">UserEventSubscriber</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;handleUserRegistered&#39;</span><span class="p">]</span>
+        <span class="p">);</span>
+
+        <span class="nv">$events</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span>
+            <span class="nx">UserUpdated</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+            <span class="p">[</span><span class="nx">UserEventSubscriber</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;handleUserUpdated&#39;</span><span class="p">]</span>
+        <span class="p">);</span>
+
+        <span class="nv">$events</span><span class="o">-&gt;</span><span class="na">listen</span><span class="p">(</span>
+            <span class="nx">UserDeleted</span><span class="o">::</span><span class="na">class</span><span class="p">,</span>
+            <span class="p">[</span><span class="nx">UserEventSubscriber</span><span class="o">::</span><span class="na">class</span><span class="p">,</span> <span class="s1">&#39;handleUserDeleted&#39;</span><span class="p">]</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="registering-subscribers">Registering Subscribers</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In EventServiceProvider</span>
+<span class="x">protected $subscribe = [</span>
+<span class="x">    UserEventSubscriber::class,</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<h2 id="queues">Queues</h2>
+<h3 id="what-are-queues">What are Queues?</h3>
+<p>Queues allow you to defer the processing of a time-consuming task, such as sending an email, until a later time. This drastically speeds up web requests to your application.</p>
+<h3 id="queue-configuration">Queue Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/queue.php</span>
+<span class="x">return [</span>
+<span class="x">    &#39;default&#39; =&gt; env(&#39;QUEUE_CONNECTION&#39;, &#39;sync&#39;),</span>
+
+<span class="x">    &#39;connections&#39; =&gt; [</span>
+<span class="x">        &#39;sync&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;sync&#39;,</span>
+<span class="x">        ],</span>
+
+<span class="x">        &#39;database&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;database&#39;,</span>
+<span class="x">            &#39;table&#39; =&gt; &#39;jobs&#39;,</span>
+<span class="x">            &#39;queue&#39; =&gt; &#39;default&#39;,</span>
+<span class="x">            &#39;retry_after&#39; =&gt; 90,</span>
+<span class="x">            &#39;after_commit&#39; =&gt; false,</span>
+<span class="x">        ],</span>
+
+<span class="x">        &#39;redis&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;redis&#39;,</span>
+<span class="x">            &#39;connection&#39; =&gt; &#39;default&#39;,</span>
+<span class="x">            &#39;queue&#39; =&gt; env(&#39;REDIS_QUEUE&#39;, &#39;default&#39;),</span>
+<span class="x">            &#39;retry_after&#39; =&gt; 90,</span>
+<span class="x">            &#39;block_for&#39; =&gt; null,</span>
+<span class="x">            &#39;after_commit&#39; =&gt; false,</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<h3 id="creating-jobs">Creating Jobs</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create job</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:job<span class="w"> </span>SendWelcomeEmail
+
+<span class="c1"># Create job with model</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:job<span class="w"> </span>ProcessOrder<span class="w"> </span>--model<span class="o">=</span>Order
+</code></pre></div>
+
+<h3 id="basic-job-structure">Basic Job Structure</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Jobs</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Bus\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendWelcomeEmail</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithQueue</span><span class="p">,</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$tries</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$timeout</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$maxExceptions</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Create a new job instance.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Execute the job.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Send welcome email</span>
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">WelcomeEmail</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Handle a job failure.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">failed</span><span class="p">(</span><span class="nx">\Throwable</span> <span class="nv">$exception</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Handle the failure</span>
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;Failed to send welcome email&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;user_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+            <span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="nv">$exception</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">(),</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="dispatching-jobs">Dispatching Jobs</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use App\Jobs\SendWelcomeEmail;</span>
+
+<span class="x">// Dispatch job</span>
+<span class="x">SendWelcomeEmail::dispatch($user);</span>
+
+<span class="x">// Dispatch with delay</span>
+<span class="x">SendWelcomeEmail::dispatch($user)-&gt;delay(now()-&gt;addMinutes(10));</span>
+
+<span class="x">// Dispatch to specific queue</span>
+<span class="x">SendWelcomeEmail::dispatch($user)-&gt;onQueue(&#39;emails&#39;);</span>
+
+<span class="x">// Dispatch with chain</span>
+<span class="x">ProcessOrder::withChain([</span>
+<span class="x">    new SendOrderConfirmation($order),</span>
+<span class="x">    new UpdateInventory($order),</span>
+<span class="x">])-&gt;dispatch($order);</span>
+</code></pre></div>
+
+<h3 id="job-batching">Job Batching</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Bus\Batch;</span>
+<span class="x">use Illuminate\Support\Facades\Bus;</span>
+
+<span class="x">$batch = Bus::batch([</span>
+<span class="x">    new ProcessPodcast(Podcast::find(1)),</span>
+<span class="x">    new ProcessPodcast(Podcast::find(2)),</span>
+<span class="x">    new ProcessPodcast(Podcast::find(3)),</span>
+<span class="x">])-&gt;then(function (Batch $batch) {</span>
+<span class="x">    // All jobs completed successfully</span>
+<span class="x">})-&gt;catch(function (Batch $batch, \Throwable $e) {</span>
+<span class="x">    // First batch job failure</span>
+<span class="x">})-&gt;finally(function (Batch $batch) {</span>
+<span class="x">    // Batch completed</span>
+<span class="x">})-&gt;dispatch();</span>
+</code></pre></div>
+
+<h2 id="queue-workers">Queue Workers</h2>
+<h3 id="starting-queue-workers">Starting Queue Workers</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Start queue worker</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work
+
+<span class="c1"># Start with specific connection</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work<span class="w"> </span>redis
+
+<span class="c1"># Start with specific queue</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work<span class="w"> </span>--queue<span class="o">=</span>high,default,low
+
+<span class="c1"># Start with timeout</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work<span class="w"> </span>--timeout<span class="o">=</span><span class="m">60</span>
+
+<span class="c1"># Start with memory limit</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work<span class="w"> </span>--memory<span class="o">=</span><span class="m">1024</span>
+
+<span class="c1"># Start in daemon mode</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:work<span class="w"> </span>--daemon
+</code></pre></div>
+
+<h3 id="queue-monitoring">Queue Monitoring</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check queue status</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:monitor
+
+<span class="c1"># Clear failed jobs</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:flush
+
+<span class="c1"># Retry failed jobs</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:retry<span class="w"> </span>all
+
+<span class="c1"># Retry specific failed job</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:retry<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+
+<h2 id="common-event-examples">Common Event Examples</h2>
+<h3 id="user-registration-event">User Registration Event</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Events</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Events\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserRegistered</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="user-registration-listeners">User Registration Listeners</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Listeners</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\UserRegistered</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Jobs\SendWelcomeEmail</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Jobs\CreateUserProfile</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendWelcomeEmail</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">SendWelcomeEmail</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">CreateUserProfile</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">profile</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">create</span><span class="p">([</span>
+            <span class="s1">&#39;bio&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;avatar&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">SendAdminNotification</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">UserRegistered</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="c1">// Notify admin about new user</span>
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;admin@example.com&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">NewUserNotification</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="order-processing-event">Order Processing Event</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Events</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\Order</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Events\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">OrderPlaced</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$order</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">Order</span> <span class="nv">$order</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">order</span> <span class="o">=</span> <span class="nv">$order</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="order-processing-listeners">Order Processing Listeners</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Listeners</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Events\OrderPlaced</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Jobs\SendOrderConfirmation</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Jobs\UpdateInventory</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Jobs\ProcessPayment</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendOrderConfirmation</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">OrderPlaced</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">SendOrderConfirmation</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">order</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">UpdateInventory</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">OrderPlaced</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">UpdateInventory</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">order</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">ProcessPayment</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">OrderPlaced</span> <span class="nv">$event</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">ProcessPayment</span><span class="o">::</span><span class="na">dispatch</span><span class="p">(</span><span class="nv">$event</span><span class="o">-&gt;</span><span class="na">order</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="common-job-examples">Common Job Examples</h2>
+<h3 id="email-job">Email Job</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Jobs</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Mail\WelcomeEmail</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Bus\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Mail</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SendWelcomeEmail</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithQueue</span><span class="p">,</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$tries</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">Mail</span><span class="o">::</span><span class="na">to</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="nx">WelcomeEmail</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">failed</span><span class="p">(</span><span class="nx">\Throwable</span> <span class="nv">$exception</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;Failed to send welcome email&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;user_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+            <span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="nv">$exception</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">(),</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="file-processing-job">File Processing Job</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Jobs</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\File</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Bus\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Storage</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ProcessUploadedFile</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithQueue</span><span class="p">,</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$file</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$timeout</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span> <span class="c1">// 5 minutes</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">File</span> <span class="nv">$file</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$path</span> <span class="o">=</span> <span class="nx">Storage</span><span class="o">::</span><span class="na">path</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">);</span>
+
+        <span class="c1">// Process the file</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span>
+            <span class="s1">&#39;status&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;processing&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="c1">// Simulate file processing</span>
+        <span class="nb">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span>
+            <span class="s1">&#39;status&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;completed&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;processed_at&#39;</span> <span class="o">=&gt;</span> <span class="nx">now</span><span class="p">(),</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="api-job">API Job</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Jobs</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Bus\Queueable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Contracts\Queue\ShouldQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Bus\Dispatchable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\InteractsWithQueue</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Queue\SerializesModels</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Http</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">SyncUserToExternalAPI</span> <span class="k">implements</span> <span class="nx">ShouldQueue</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">Dispatchable</span><span class="p">,</span> <span class="nx">InteractsWithQueue</span><span class="p">,</span> <span class="nx">Queueable</span><span class="p">,</span> <span class="nx">SerializesModels</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$tries</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$response</span> <span class="o">=</span> <span class="nx">Http</span><span class="o">::</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;https://api.example.com/users&#39;</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$response</span><span class="o">-&gt;</span><span class="na">successful</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">([</span>
+                <span class="s1">&#39;external_id&#39;</span> <span class="o">=&gt;</span> <span class="nv">$response</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;synced_at&#39;</span> <span class="o">=&gt;</span> <span class="nx">now</span><span class="p">(),</span>
+            <span class="p">]);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nx">\Exception</span><span class="p">(</span><span class="s1">&#39;Failed to sync user to external API&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-keep-events-simple">1. Keep Events Simple</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">class UserRegistered</span>
+<span class="x">{</span>
+<span class="x">    public $user;</span>
+
+<span class="x">    public function __construct(User $user)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;user = $user;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Bad - Too much data</span>
+<span class="x">class UserRegistered</span>
+<span class="x">{</span>
+<span class="x">    public $user;</span>
+<span class="x">    public $ip;</span>
+<span class="x">    public $userAgent;</span>
+<span class="x">    public $timestamp;</span>
+<span class="x">    public $referrer;</span>
+<span class="x">    // ... many more properties</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-use-queues-for-heavy-operations">2. Use Queues for Heavy Operations</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good - Queue heavy operations</span>
+<span class="x">class SendWelcomeEmail implements ShouldQueue</span>
+<span class="x">{</span>
+<span class="x">    public function handle(UserRegistered $event): void</span>
+<span class="x">    {</span>
+<span class="x">        // This will be queued</span>
+<span class="x">        Mail::to($event-&gt;user-&gt;email)-&gt;send(new WelcomeEmail($event-&gt;user));</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Bad - Blocking operation</span>
+<span class="x">class SendWelcomeEmail</span>
+<span class="x">{</span>
+<span class="x">    public function handle(UserRegistered $event): void</span>
+<span class="x">    {</span>
+<span class="x">        // This blocks the request</span>
+<span class="x">        Mail::to($event-&gt;user-&gt;email)-&gt;send(new WelcomeEmail($event-&gt;user));</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="3-handle-job-failures">3. Handle Job Failures</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class SendWelcomeEmail implements ShouldQueue</span>
+<span class="x">{</span>
+<span class="x">    public $tries = 3;</span>
+<span class="x">    public $timeout = 120;</span>
+
+<span class="x">    public function failed(\Throwable $exception): void</span>
+<span class="x">    {</span>
+<span class="x">        Log::error(&#39;Failed to send welcome email&#39;, [</span>
+<span class="x">            &#39;user_id&#39; =&gt; $this-&gt;user-&gt;id,</span>
+<span class="x">            &#39;error&#39; =&gt; $exception-&gt;getMessage(),</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="4-use-job-batching-for-related-tasks">4. Use Job Batching for Related Tasks</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">$batch = Bus::batch([</span>
+<span class="x">    new ProcessOrder($order),</span>
+<span class="x">    new SendOrderConfirmation($order),</span>
+<span class="x">    new UpdateInventory($order),</span>
+<span class="x">])-&gt;then(function (Batch $batch) {</span>
+<span class="x">    // All jobs completed successfully</span>
+<span class="x">})-&gt;catch(function (Batch $batch, \Throwable $e) {</span>
+<span class="x">    // Handle failure</span>
+<span class="x">})-&gt;dispatch();</span>
+</code></pre></div>
+
+<h3 id="5-monitor-queue-performance">5. Monitor Queue Performance</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Monitor queue status</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:monitor
+
+<span class="c1"># Check failed jobs</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:failed
+
+<span class="c1"># Retry failed jobs</span>
+php<span class="w"> </span>artisan<span class="w"> </span>queue:retry<span class="w"> </span>all
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Creating and dispatching events</li>
+<li>✅ Creating and registering listeners</li>
+<li>✅ Event subscribers</li>
+<li>✅ Broadcasting events</li>
+<li>✅ Creating and dispatching jobs</li>
+<li>✅ Queue configuration and workers</li>
+<li>✅ Job batching and monitoring</li>
+<li>✅ Common event and job examples</li>
+<li>✅ Best practices for events and queues</li>
+</ul>
+<p>Events and queues provide powerful ways to decouple your application and handle background tasks. In the next chapter, we'll explore testing in Laravel.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/10-events-queues.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="09-auth.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="11-testing.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

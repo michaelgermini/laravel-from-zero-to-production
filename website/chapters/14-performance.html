@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 14-performance: Performance - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 14-performance: Performance</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-tachometer-alt"></i> Chapter 14-performance: Performance
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="performance-optimization">Performance Optimization</h1>
+<h2 id="overview">Overview</h2>
+<p>Performance optimization is crucial for building scalable Laravel applications. This chapter covers various techniques and best practices for improving application performance, from database optimization to application profiling and monitoring.</p>
+<h2 id="performance-fundamentals">Performance Fundamentals</h2>
+<h3 id="what-affects-performance">What Affects Performance?</h3>
+<ol>
+<li><strong>Database Queries</strong>: Slow queries, N+1 problems, missing indexes</li>
+<li><strong>Memory Usage</strong>: Large datasets, memory leaks, inefficient data structures</li>
+<li><strong>CPU Usage</strong>: Complex calculations, inefficient algorithms</li>
+<li><strong>Network</strong>: Slow external API calls, large response sizes</li>
+<li><strong>Caching</strong>: Missing cache opportunities, inefficient cache strategies</li>
+</ol>
+<h3 id="performance-metrics">Performance Metrics</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Measure execution time</span>
+<span class="x">$start = microtime(true);</span>
+<span class="x">// Your code here</span>
+<span class="x">$executionTime = microtime(true) - $start;</span>
+
+<span class="x">// Measure memory usage</span>
+<span class="x">$memoryUsage = memory_get_usage(true);</span>
+<span class="x">$peakMemory = memory_get_peak_usage(true);</span>
+</code></pre></div>
+
+<h2 id="database-optimization">Database Optimization</h2>
+<h3 id="query-optimization">Query Optimization</h3>
+<h4 id="n1-problem">N+1 Problem</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">// Bad: N+1 problem</span>
+<span class="x">$users = User::all();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    echo $user-&gt;posts-&gt;count(); // Executes N queries</span>
+<span class="x">}</span>
+
+<span class="x">// Good: Eager loading</span>
+<span class="x">$users = User::with(&#39;posts&#39;)-&gt;get();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    echo $user-&gt;posts-&gt;count(); // No additional queries</span>
+<span class="x">}</span>
+
+<span class="x">// Better: Count with relationship</span>
+<span class="x">$users = User::withCount(&#39;posts&#39;)-&gt;get();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    echo $user-&gt;posts_count; // Pre-calculated</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h4 id="select-specific-columns">Select Specific Columns</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">// Bad: Select all columns</span>
+<span class="x">$users = User::all();</span>
+
+<span class="x">// Good: Select only needed columns</span>
+<span class="x">$users = User::select(&#39;id&#39;, &#39;name&#39;, &#39;email&#39;)-&gt;get();</span>
+
+<span class="x">// Better: Use resource classes</span>
+<span class="x">class UserResource extends JsonResource</span>
+<span class="x">{</span>
+<span class="x">    public function toArray($request)</span>
+<span class="x">    {</span>
+<span class="x">        return [</span>
+<span class="x">            &#39;id&#39; =&gt; $this-&gt;id,</span>
+<span class="x">            &#39;name&#39; =&gt; $this-&gt;name,</span>
+<span class="x">            &#39;email&#39; =&gt; $this-&gt;email,</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h4 id="use-database-indexes">Use Database Indexes</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">// Migration with indexes</span>
+<span class="x">public function up()</span>
+<span class="x">{</span>
+<span class="x">    Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">        $table-&gt;id();</span>
+<span class="x">        $table-&gt;foreignId(&#39;user_id&#39;)-&gt;constrained()-&gt;onDelete(&#39;cascade&#39;);</span>
+<span class="x">        $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">        $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">        $table-&gt;string(&#39;slug&#39;)-&gt;unique();</span>
+<span class="x">        $table-&gt;boolean(&#39;is_published&#39;)-&gt;default(false);</span>
+<span class="x">        $table-&gt;timestamps();</span>
+
+<span class="x">        // Add indexes for frequently queried columns</span>
+<span class="x">        $table-&gt;index([&#39;user_id&#39;, &#39;is_published&#39;]);</span>
+<span class="x">        $table-&gt;index(&#39;created_at&#39;);</span>
+<span class="x">        $table-&gt;fullText([&#39;title&#39;, &#39;content&#39;]);</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="query-scopes">Query Scopes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class Post extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Local scopes for common queries</span>
+<span class="x">    public function scopePublished($query)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;is_published&#39;, true);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function scopeByUser($query, $userId)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;user_id&#39;, $userId);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function scopeRecent($query, $days = 7)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;created_at&#39;, &#39;&gt;=&#39;, now()-&gt;subDays($days));</span>
+<span class="x">    }</span>
+
+<span class="x">    // Usage</span>
+<span class="x">    $posts = Post::published()-&gt;byUser($userId)-&gt;recent(30)-&gt;get();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="database-connection-optimization">Database Connection Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/database.php</span>
+<span class="x">&#39;mysql&#39; =&gt; [</span>
+<span class="x">    &#39;driver&#39; =&gt; &#39;mysql&#39;,</span>
+<span class="x">    &#39;host&#39; =&gt; env(&#39;DB_HOST&#39;, &#39;127.0.0.1&#39;),</span>
+<span class="x">    &#39;port&#39; =&gt; env(&#39;DB_PORT&#39;, &#39;3306&#39;),</span>
+<span class="x">    &#39;database&#39; =&gt; env(&#39;DB_DATABASE&#39;, &#39;forge&#39;),</span>
+<span class="x">    &#39;username&#39; =&gt; env(&#39;DB_USERNAME&#39;, &#39;forge&#39;),</span>
+<span class="x">    &#39;password&#39; =&gt; env(&#39;DB_PASSWORD&#39;, &#39;&#39;),</span>
+<span class="x">    &#39;charset&#39; =&gt; &#39;utf8mb4&#39;,</span>
+<span class="x">    &#39;collation&#39; =&gt; &#39;utf8mb4_unicode_ci&#39;,</span>
+<span class="x">    &#39;prefix&#39; =&gt; &#39;&#39;,</span>
+<span class="x">    &#39;strict&#39; =&gt; true,</span>
+<span class="x">    &#39;engine&#39; =&gt; null,</span>
+<span class="x">    &#39;options&#39; =&gt; extension_loaded(&#39;pdo_mysql&#39;) ? array_filter([</span>
+<span class="x">        PDO::MYSQL_ATTR_SSL_CA =&gt; env(&#39;MYSQL_ATTR_SSL_CA&#39;),</span>
+<span class="x">        PDO::ATTR_PERSISTENT =&gt; true, // Enable persistent connections</span>
+<span class="x">    ]) : [],</span>
+<span class="x">],</span>
+</code></pre></div>
+
+<h2 id="application-optimization">Application Optimization</h2>
+<h3 id="route-caching">Route Caching</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Cache routes for production</span>
+php<span class="w"> </span>artisan<span class="w"> </span>route:cache
+
+<span class="c1"># Cache configuration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>config:cache
+
+<span class="c1"># Cache views</span>
+php<span class="w"> </span>artisan<span class="w"> </span>view:cache
+
+<span class="c1"># Optimize autoloader</span>
+composer<span class="w"> </span>install<span class="w"> </span>--optimize-autoloader<span class="w"> </span>--no-dev
+</code></pre></div>
+
+<h3 id="service-container-optimization">Service Container Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use singleton for expensive services</span>
+<span class="x">$this-&gt;app-&gt;singleton(ExpensiveService::class, function ($app) {</span>
+<span class="x">    return new ExpensiveService();</span>
+<span class="x">});</span>
+
+<span class="x">// Use lazy loading for services</span>
+<span class="x">$this-&gt;app-&gt;when(PostController::class)</span>
+<span class="x">    -&gt;needs(PostService::class)</span>
+<span class="x">    -&gt;give(function () {</span>
+<span class="x">        return new PostService();</span>
+<span class="x">    });</span>
+</code></pre></div>
+
+<h3 id="memory-management">Memory Management</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use generators for large datasets</span>
+<span class="x">function getLargeDataset()</span>
+<span class="x">{</span>
+<span class="x">    $query = DB::table(&#39;posts&#39;)-&gt;orderBy(&#39;id&#39;);</span>
+
+<span class="x">    foreach ($query-&gt;cursor() as $post) {</span>
+<span class="x">        yield $post;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage</span>
+<span class="x">foreach (getLargeDataset() as $post) {</span>
+<span class="x">    // Process each post</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="chunk-processing">Chunk Processing</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Process large datasets in chunks</span>
+<span class="x">User::chunk(1000, function ($users) {</span>
+<span class="x">    foreach ($users as $user) {</span>
+<span class="x">        // Process user</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+
+<span class="x">// Chunk by ID for better performance</span>
+<span class="x">User::where(&#39;id&#39;, &#39;&gt;&#39;, 0)-&gt;chunkById(1000, function ($users) {</span>
+<span class="x">    foreach ($users as $user) {</span>
+<span class="x">        // Process user</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="caching-strategies">Caching Strategies</h2>
+<h3 id="model-caching">Model Caching</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected static function boot()</span>
+<span class="x">    {</span>
+<span class="x">        parent::boot();</span>
+
+<span class="x">        // Cache frequently accessed data</span>
+<span class="x">        static::saved(function ($user) {</span>
+<span class="x">            Cache::tags(&#39;users&#39;)-&gt;flush();</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+
+<span class="x">    public function getCachedPostsAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return Cache::remember(&quot;user.{$this-&gt;id}.posts&quot;, 3600, function () {</span>
+<span class="x">            return $this-&gt;posts()-&gt;with(&#39;comments&#39;)-&gt;get();</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="query-result-caching">Query Result Caching</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cache expensive queries</span>
+<span class="x">$popularPosts = Cache::remember(&#39;popular_posts&#39;, 3600, function () {</span>
+<span class="x">    return Post::with(&#39;user&#39;)</span>
+<span class="x">        -&gt;where(&#39;views&#39;, &#39;&gt;&#39;, 1000)</span>
+<span class="x">        -&gt;orderBy(&#39;views&#39;, &#39;desc&#39;)</span>
+<span class="x">        -&gt;take(10)</span>
+<span class="x">        -&gt;get();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="response-caching">Response Caching</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cache entire responses</span>
+<span class="x">Route::get(&#39;/posts&#39;, function () {</span>
+<span class="x">    return Cache::remember(&#39;posts_page&#39;, 1800, function () {</span>
+<span class="x">        return view(&#39;posts.index&#39;, [</span>
+<span class="x">            &#39;posts&#39; =&gt; Post::with(&#39;user&#39;)-&gt;paginate(20)</span>
+<span class="x">        ]);</span>
+<span class="x">    });</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="profiling-and-monitoring">Profiling and Monitoring</h2>
+<h3 id="laravel-telescope">Laravel Telescope</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Laravel Telescope</span>
+composer<span class="w"> </span>require<span class="w"> </span>laravel/telescope<span class="w"> </span>--dev
+
+<span class="c1"># Publish configuration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>telescope:install
+
+<span class="c1"># Access dashboard at /telescope</span>
+</code></pre></div>
+
+<h3 id="query-logging">Query Logging</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Enable query logging</span>
+<span class="x">DB::enableQueryLog();</span>
+
+<span class="x">// Your code here</span>
+<span class="x">$users = User::with(&#39;posts&#39;)-&gt;get();</span>
+
+<span class="x">// Get executed queries</span>
+<span class="x">$queries = DB::getQueryLog();</span>
+
+<span class="x">// Log slow queries</span>
+<span class="x">DB::listen(function ($query) {</span>
+<span class="x">    if ($query-&gt;time &gt; 100) {</span>
+<span class="x">        Log::warning(&#39;Slow query detected&#39;, [</span>
+<span class="x">            &#39;sql&#39; =&gt; $query-&gt;sql,</span>
+<span class="x">            &#39;time&#39; =&gt; $query-&gt;time,</span>
+<span class="x">            &#39;bindings&#39; =&gt; $query-&gt;bindings,</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="performance-monitoring">Performance Monitoring</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Custom performance monitoring</span>
+<span class="x">class PerformanceMonitor</span>
+<span class="x">{</span>
+<span class="x">    public static function measure($name, callable $callback)</span>
+<span class="x">    {</span>
+<span class="x">        $start = microtime(true);</span>
+<span class="x">        $startMemory = memory_get_usage();</span>
+
+<span class="x">        $result = $callback();</span>
+
+<span class="x">        $executionTime = microtime(true) - $start;</span>
+<span class="x">        $memoryUsed = memory_get_usage() - $startMemory;</span>
+
+<span class="x">        Log::info(&quot;Performance: {$name}&quot;, [</span>
+<span class="x">            &#39;execution_time&#39; =&gt; $executionTime,</span>
+<span class="x">            &#39;memory_used&#39; =&gt; $memoryUsed,</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $result;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage</span>
+<span class="x">$users = PerformanceMonitor::measure(&#39;get_users&#39;, function () {</span>
+<span class="x">    return User::with(&#39;posts&#39;)-&gt;get();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="frontend-optimization">Frontend Optimization</h2>
+<h3 id="asset-optimization">Asset Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Mix configuration for asset optimization</span>
+<span class="x">// webpack.mix.js</span>
+<span class="x">const mix = require(&#39;laravel-mix&#39;);</span>
+
+<span class="x">mix.js(&#39;resources/js/app.js&#39;, &#39;public/js&#39;)</span>
+<span class="x">   .sass(&#39;resources/sass/app.scss&#39;, &#39;public/css&#39;)</span>
+<span class="x">   .version() // Add versioning for cache busting</span>
+<span class="x">   .sourceMaps() // Enable source maps for debugging</span>
+<span class="x">   .minify() // Minify assets</span>
+<span class="x">   .extract([&#39;vue&#39;, &#39;axios&#39;]); // Extract vendor libraries</span>
+</code></pre></div>
+
+<h3 id="blade-optimization">Blade Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use @include instead of @component for simple includes</span>
+<span class="x">@include(&#39;components.alert&#39;, [&#39;type&#39; =&gt; &#39;success&#39;])</span>
+
+<span class="x">// Cache expensive blade operations</span>
+<span class="x">@cache(&#39;expensive_calculation&#39;, 3600)</span>
+<span class="x">    @php</span>
+<span class="x">        $result = expensiveCalculation();</span>
+<span class="x">    @endphp</span>
+<span class="x">    {{ $result }}</span>
+<span class="x">@endcache</span>
+</code></pre></div>
+
+<h3 id="response-optimization">Response Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Compress responses</span>
+<span class="x">Route::get(&#39;/api/posts&#39;, function () {</span>
+<span class="x">    return response()-&gt;json(Post::all())</span>
+<span class="x">        -&gt;header(&#39;Content-Encoding&#39;, &#39;gzip&#39;);</span>
+<span class="x">});</span>
+
+<span class="x">// Use JSON resources for consistent API responses</span>
+<span class="x">class PostResource extends JsonResource</span>
+<span class="x">{</span>
+<span class="x">    public function toArray($request)</span>
+<span class="x">    {</span>
+<span class="x">        return [</span>
+<span class="x">            &#39;id&#39; =&gt; $this-&gt;id,</span>
+<span class="x">            &#39;title&#39; =&gt; $this-&gt;title,</span>
+<span class="x">            &#39;content&#39; =&gt; $this-&gt;when($request-&gt;show_content, $this-&gt;content),</span>
+<span class="x">            &#39;user&#39; =&gt; new UserResource($this-&gt;whenLoaded(&#39;user&#39;)),</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="queue-optimization">Queue Optimization</h2>
+<h3 id="job-optimization">Job Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class ProcessLargeDataset implements ShouldQueue</span>
+<span class="x">{</span>
+<span class="x">    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;</span>
+
+<span class="x">    public $timeout = 300; // 5 minutes</span>
+<span class="x">    public $tries = 3;</span>
+<span class="x">    public $maxExceptions = 1;</span>
+
+<span class="x">    public function handle()</span>
+<span class="x">    {</span>
+<span class="x">        // Process in chunks to avoid memory issues</span>
+<span class="x">        User::chunk(1000, function ($users) {</span>
+<span class="x">            foreach ($users as $user) {</span>
+<span class="x">                ProcessUser::dispatch($user);</span>
+<span class="x">            }</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="queue-configuration">Queue Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/queue.php</span>
+<span class="x">&#39;connections&#39; =&gt; [</span>
+<span class="x">    &#39;redis&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;redis&#39;,</span>
+<span class="x">        &#39;connection&#39; =&gt; &#39;default&#39;,</span>
+<span class="x">        &#39;queue&#39; =&gt; env(&#39;REDIS_QUEUE&#39;, &#39;default&#39;),</span>
+<span class="x">        &#39;retry_after&#39; =&gt; 90,</span>
+<span class="x">        &#39;block_for&#39; =&gt; null,</span>
+<span class="x">    ],</span>
+<span class="x">],</span>
+
+<span class="x">// Use multiple queues for different priorities</span>
+<span class="x">ProcessUser::dispatch($user)-&gt;onQueue(&#39;high&#39;);</span>
+<span class="x">ProcessUser::dispatch($user)-&gt;onQueue(&#39;low&#39;);</span>
+</code></pre></div>
+
+<h2 id="server-optimization">Server Optimization</h2>
+<h3 id="php-configuration">PHP Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">; php.ini optimizations</span>
+<span class="na">memory_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">512M</span>
+<span class="na">max_execution_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">300</span>
+<span class="na">opcache.enable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+<span class="na">opcache.memory_consumption</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128</span>
+<span class="na">opcache.interned_strings_buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8</span>
+<span class="na">opcache.max_accelerated_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">4000</span>
+<span class="na">opcache.revalidate_freq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">opcache.fast_shutdown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+</code></pre></div>
+
+<h3 id="web-server-configuration">Web Server Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Nginx configuration for Laravel</span>
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">yourdomain.com</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/your-app/public</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Enable gzip compression</span>
+<span class="w">    </span><span class="kn">gzip</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_vary</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_min_length</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">text/xml</span><span class="w"> </span><span class="s">text/javascript</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/xml+rss</span><span class="w"> </span><span class="s">application/json</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Cache static files</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="sr">*</span><span class="w"> </span><span class="s">\.(jpg|jpeg|png|gif|ico|css|js)</span>$<span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">1y</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">immutable&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># Laravel routing</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.php?</span><span class="nv">$query_string</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1"># PHP processing</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">unix:/var/run/php/php8.1-fpm.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_index</span><span class="w"> </span><span class="s">index.php</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_param</span><span class="w"> </span><span class="s">SCRIPT_FILENAME</span><span class="w"> </span><span class="nv">$realpath_root$fastcgi_script_name</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">include</span><span class="w"> </span><span class="s">fastcgi_params</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="performance-testing">Performance Testing</h2>
+<h3 id="load-testing">Load Testing</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Simple load testing</span>
+<span class="x">class LoadTest</span>
+<span class="x">{</span>
+<span class="x">    public static function test($url, $requests = 100, $concurrency = 10)</span>
+<span class="x">    {</span>
+<span class="x">        $start = microtime(true);</span>
+<span class="x">        $successful = 0;</span>
+<span class="x">        $failed = 0;</span>
+
+<span class="x">        for ($i = 0; $i &lt; $requests; $i++) {</span>
+<span class="x">            try {</span>
+<span class="x">                $response = Http::get($url);</span>
+<span class="x">                if ($response-&gt;successful()) {</span>
+<span class="x">                    $successful++;</span>
+<span class="x">                } else {</span>
+<span class="x">                    $failed++;</span>
+<span class="x">                }</span>
+<span class="x">            } catch (Exception $e) {</span>
+<span class="x">                $failed++;</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+
+<span class="x">        $duration = microtime(true) - $start;</span>
+<span class="x">        $rps = $requests / $duration;</span>
+
+<span class="x">        return [</span>
+<span class="x">            &#39;requests&#39; =&gt; $requests,</span>
+<span class="x">            &#39;successful&#39; =&gt; $successful,</span>
+<span class="x">            &#39;failed&#39; =&gt; $failed,</span>
+<span class="x">            &#39;duration&#39; =&gt; $duration,</span>
+<span class="x">            &#39;requests_per_second&#39; =&gt; $rps,</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="benchmark-testing">Benchmark Testing</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Benchmark different approaches</span>
+<span class="x">class BenchmarkTest</span>
+<span class="x">{</span>
+<span class="x">    public static function compare($name, array $tests)</span>
+<span class="x">    {</span>
+<span class="x">        $results = [];</span>
+
+<span class="x">        foreach ($tests as $testName =&gt; $test) {</span>
+<span class="x">            $start = microtime(true);</span>
+<span class="x">            $startMemory = memory_get_usage();</span>
+
+<span class="x">            $result = $test();</span>
+
+<span class="x">            $executionTime = microtime(true) - $start;</span>
+<span class="x">            $memoryUsed = memory_get_usage() - $startMemory;</span>
+
+<span class="x">            $results[$testName] = [</span>
+<span class="x">                &#39;execution_time&#39; =&gt; $executionTime,</span>
+<span class="x">                &#39;memory_used&#39; =&gt; $memoryUsed,</span>
+<span class="x">                &#39;result&#39; =&gt; $result,</span>
+<span class="x">            ];</span>
+<span class="x">        }</span>
+
+<span class="x">        Log::info(&quot;Benchmark: {$name}&quot;, $results);</span>
+
+<span class="x">        return $results;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage</span>
+<span class="x">BenchmarkTest::compare(&#39;User Queries&#39;, [</span>
+<span class="x">    &#39;eager_loading&#39; =&gt; function () {</span>
+<span class="x">        return User::with(&#39;posts&#39;)-&gt;get();</span>
+<span class="x">    },</span>
+<span class="x">    &#39;lazy_loading&#39; =&gt; function () {</span>
+<span class="x">        return User::all();</span>
+<span class="x">    },</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-database-best-practices">1. Database Best Practices</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use database transactions</span>
+<span class="x">DB::transaction(function () {</span>
+<span class="x">    $user = User::create($data);</span>
+<span class="x">    $user-&gt;profile()-&gt;create($profileData);</span>
+<span class="x">});</span>
+
+<span class="x">// Use database indexes</span>
+<span class="x">Schema::table(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;index([&#39;user_id&#39;, &#39;created_at&#39;]);</span>
+<span class="x">});</span>
+
+<span class="x">// Use database constraints</span>
+<span class="x">Schema::table(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;users&#39;)-&gt;onDelete(&#39;cascade&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="2-code-best-practices">2. Code Best Practices</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use lazy loading for expensive operations</span>
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function getExpensiveDataAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;remember(&#39;expensive_data&#39;, 3600, function () {</span>
+<span class="x">            return $this-&gt;calculateExpensiveData();</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Use collections efficiently</span>
+<span class="x">$users = User::all();</span>
+<span class="x">$activeUsers = $users-&gt;filter-&gt;isActive();</span>
+<span class="x">$userNames = $users-&gt;pluck(&#39;name&#39;);</span>
+</code></pre></div>
+
+<h3 id="3-caching-best-practices">3. Caching Best Practices</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use appropriate cache keys</span>
+<span class="x">Cache::put(&quot;user.{$user-&gt;id}.profile&quot;, $profile, 3600);</span>
+<span class="x">Cache::put(&quot;user.{$user-&gt;id}.posts&quot;, $posts, 1800);</span>
+
+<span class="x">// Use cache tags for related data</span>
+<span class="x">Cache::tags([&#39;users&#39;, &#39;posts&#39;])-&gt;put(&quot;user.{$user-&gt;id}&quot;, $user, 3600);</span>
+
+<span class="x">// Implement cache warming</span>
+<span class="x">class CacheWarming</span>
+<span class="x">{</span>
+<span class="x">    public function warm()</span>
+<span class="x">    {</span>
+<span class="x">        Cache::remember(&#39;popular_posts&#39;, 3600, function () {</span>
+<span class="x">            return Post::popular()-&gt;take(10)-&gt;get();</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>Performance optimization in Laravel involves multiple aspects:</p>
+<ul>
+<li><strong>Database Optimization</strong>: Query optimization, indexing, eager loading</li>
+<li><strong>Application Optimization</strong>: Caching, memory management, code efficiency</li>
+<li><strong>Server Optimization</strong>: PHP configuration, web server settings</li>
+<li><strong>Monitoring</strong>: Profiling, benchmarking, performance testing</li>
+<li><strong>Best Practices</strong>: Following established patterns and guidelines</li>
+</ul>
+<p>By implementing these optimization techniques, you can significantly improve your Laravel application's performance and scalability.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/14-performance.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="13-caching.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="15-microservices.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 15-microservices: Microservices - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 15-microservices: Microservices</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-network-wired"></i> Chapter 15-microservices: Microservices
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="microservices">Microservices</h1>
+<h2 id="overview">Overview</h2>
+<p>Microservices architecture involves breaking down a monolithic application into smaller, independent services. This chapter covers building microservices with Laravel, including service design, communication patterns, and deployment strategies.</p>
+<h2 id="what-are-microservices">What are Microservices?</h2>
+<p>Microservices are small, autonomous services that work together to form a larger application. Each service:<br />
+- Has its own database<br />
+- Can be developed, deployed, and scaled independently<br />
+- Communicates with other services via APIs<br />
+- Has a single responsibility</p>
+<h2 id="service-design-principles">Service Design Principles</h2>
+<h3 id="1-single-responsibility">1. Single Responsibility</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User Service - handles user management only</span>
+<span class="x">class UserService</span>
+<span class="x">{</span>
+<span class="x">    public function createUser($data)</span>
+<span class="x">    {</span>
+<span class="x">        return User::create($data);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function updateUser($id, $data)</span>
+<span class="x">    {</span>
+<span class="x">        return User::findOrFail($id)-&gt;update($data);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Post Service - handles posts only</span>
+<span class="x">class PostService</span>
+<span class="x">{</span>
+<span class="x">    public function createPost($data)</span>
+<span class="x">    {</span>
+<span class="x">        return Post::create($data);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function getPostsByUser($userId)</span>
+<span class="x">    {</span>
+<span class="x">        return Post::where(&#39;user_id&#39;, $userId)-&gt;get();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-service-independence">2. Service Independence</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Each service has its own database</span>
+<span class="x">// User Service Database</span>
+<span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;timestamps();</span>
+<span class="x">});</span>
+
+<span class="x">// Post Service Database</span>
+<span class="x">Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">    $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;timestamps();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="service-communication">Service Communication</h2>
+<h3 id="1-synchronous-communication-httprest">1. Synchronous Communication (HTTP/REST)</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Service-to-service communication</span>
+<span class="x">class PostService</span>
+<span class="x">{</span>
+<span class="x">    protected $userServiceUrl;</span>
+
+<span class="x">    public function __construct()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;userServiceUrl = config(&#39;services.user_service.url&#39;);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function createPost($data)</span>
+<span class="x">    {</span>
+<span class="x">        // Verify user exists before creating post</span>
+<span class="x">        $user = Http::get(&quot;{$this-&gt;userServiceUrl}/api/v1/users/{$data[&#39;user_id&#39;]}&quot;);</span>
+
+<span class="x">        if (!$user-&gt;successful()) {</span>
+<span class="x">            throw new UserNotFoundException();</span>
+<span class="x">        }</span>
+
+<span class="x">        return Post::create($data);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-asynchronous-communication-eventsqueues">2. Asynchronous Communication (Events/Queues)</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User Service - Publish events</span>
+<span class="x">class UserCreated</span>
+<span class="x">{</span>
+<span class="x">    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;</span>
+
+<span class="x">    public $user;</span>
+
+<span class="x">    public function __construct($user)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;user = $user;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Post Service - Listen to events</span>
+<span class="x">class UserCreatedListener</span>
+<span class="x">{</span>
+<span class="x">    public function handle(UserCreated $event)</span>
+<span class="x">    {</span>
+<span class="x">        UserProfile::create([</span>
+<span class="x">            &#39;user_id&#39; =&gt; $event-&gt;user[&#39;id&#39;],</span>
+<span class="x">            &#39;name&#39; =&gt; $event-&gt;user[&#39;name&#39;],</span>
+<span class="x">            &#39;email&#39; =&gt; $event-&gt;user[&#39;email&#39;],</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="api-gateway">API Gateway</h2>
+<h3 id="basic-api-gateway">Basic API Gateway</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// API Gateway Service</span>
+<span class="x">class ApiGateway</span>
+<span class="x">{</span>
+<span class="x">    protected $services = [</span>
+<span class="x">        &#39;users&#39; =&gt; &#39;http://user-service:8000&#39;,</span>
+<span class="x">        &#39;posts&#39; =&gt; &#39;http://post-service:8001&#39;,</span>
+<span class="x">        &#39;comments&#39; =&gt; &#39;http://comment-service:8002&#39;,</span>
+<span class="x">    ];</span>
+
+<span class="x">    public function route($service, $path, $method = &#39;GET&#39;, $data = null)</span>
+<span class="x">    {</span>
+<span class="x">        $url = $this-&gt;services[$service] . $path;</span>
+
+<span class="x">        $response = Http::withHeaders([</span>
+<span class="x">            &#39;Authorization&#39; =&gt; request()-&gt;header(&#39;Authorization&#39;),</span>
+<span class="x">            &#39;Content-Type&#39; =&gt; &#39;application/json&#39;,</span>
+<span class="x">        ])-&gt;$method($url, $data);</span>
+
+<span class="x">        return $response-&gt;json();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Gateway Routes</span>
+<span class="x">Route::prefix(&#39;api/v1&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::get(&#39;users&#39;, function () {</span>
+<span class="x">        return app(ApiGateway::class)-&gt;route(&#39;users&#39;, &#39;/api/v1/users&#39;);</span>
+<span class="x">    });</span>
+
+<span class="x">    Route::get(&#39;posts&#39;, function () {</span>
+<span class="x">        return app(ApiGateway::class)-&gt;route(&#39;posts&#39;, &#39;/api/v1/posts&#39;);</span>
+<span class="x">    });</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="circuit-breaker-pattern">Circuit Breaker Pattern</h2>
+<div class="codehilite"><pre><span></span><code><span class="x">class CircuitBreaker</span>
+<span class="x">{</span>
+<span class="x">    protected $failures = 0;</span>
+<span class="x">    protected $threshold = 5;</span>
+<span class="x">    protected $timeout = 60;</span>
+<span class="x">    protected $state = &#39;CLOSED&#39;;</span>
+
+<span class="x">    public function call($callback)</span>
+<span class="x">    {</span>
+<span class="x">        if ($this-&gt;state === &#39;OPEN&#39;) {</span>
+<span class="x">            throw new CircuitBreakerOpenException();</span>
+<span class="x">        }</span>
+
+<span class="x">        try {</span>
+<span class="x">            $result = $callback();</span>
+<span class="x">            $this-&gt;onSuccess();</span>
+<span class="x">            return $result;</span>
+<span class="x">        } catch (Exception $e) {</span>
+<span class="x">            $this-&gt;onFailure();</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function onSuccess()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;failures = 0;</span>
+<span class="x">        $this-&gt;state = &#39;CLOSED&#39;;</span>
+<span class="x">    }</span>
+
+<span class="x">    private function onFailure()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;failures++;</span>
+<span class="x">        if ($this-&gt;failures &gt;= $this-&gt;threshold) {</span>
+<span class="x">            $this-&gt;state = &#39;OPEN&#39;;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="service-discovery">Service Discovery</h2>
+<div class="codehilite"><pre><span></span><code><span class="x">// Service Registry</span>
+<span class="x">class ServiceRegistry</span>
+<span class="x">{</span>
+<span class="x">    protected $services = [];</span>
+
+<span class="x">    public function register($name, $url)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;services[$name] = [</span>
+<span class="x">            &#39;url&#39; =&gt; $url,</span>
+<span class="x">            &#39;registered_at&#39; =&gt; now(),</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    public function get($name)</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;services[$name] ?? null;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Service Registration</span>
+<span class="x">Route::post(&#39;/register&#39;, function (Request $request) {</span>
+<span class="x">    app(ServiceRegistry::class)-&gt;register(</span>
+<span class="x">        $request-&gt;name,</span>
+<span class="x">        $request-&gt;url</span>
+<span class="x">    );</span>
+
+<span class="x">    return response()-&gt;json([&#39;status&#39; =&gt; &#39;registered&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="deployment-with-docker">Deployment with Docker</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># docker-compose.yml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api-gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./api-gateway</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8000:8000&quot;</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user-service</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">post-service</span>
+
+<span class="w">  </span><span class="nt">user-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./user-service</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8001:8000&quot;</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DB_HOST=user-db</span>
+
+<span class="w">  </span><span class="nt">post-service</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./post-service</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8002:8000&quot;</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DB_HOST=post-db</span>
+
+<span class="w">  </span><span class="nt">user-db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql:8.0</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user_service</span>
+
+<span class="w">  </span><span class="nt">post-db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql:8.0</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">post_service</span>
+</code></pre></div>
+
+<h2 id="monitoring-and-observability">Monitoring and Observability</h2>
+<h3 id="health-checks">Health Checks</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Health check endpoint for each service</span>
+<span class="x">Route::get(&#39;/health&#39;, function () {</span>
+<span class="x">    return response()-&gt;json([</span>
+<span class="x">        &#39;status&#39; =&gt; &#39;healthy&#39;,</span>
+<span class="x">        &#39;timestamp&#39; =&gt; now(),</span>
+<span class="x">        &#39;service&#39; =&gt; config(&#39;app.name&#39;),</span>
+<span class="x">        &#39;version&#39; =&gt; config(&#39;app.version&#39;),</span>
+<span class="x">    ]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="service-metrics">Service Metrics</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Prometheus metrics</span>
+<span class="x">class MetricsMiddleware</span>
+<span class="x">{</span>
+<span class="x">    public function handle($request, Closure $next)</span>
+<span class="x">    {</span>
+<span class="x">        $start = microtime(true);</span>
+
+<span class="x">        $response = $next($request);</span>
+
+<span class="x">        $duration = microtime(true) - $start;</span>
+
+<span class="x">        // Record metrics</span>
+<span class="x">        Log::info(&#39;request_metrics&#39;, [</span>
+<span class="x">            &#39;method&#39; =&gt; $request-&gt;method(),</span>
+<span class="x">            &#39;url&#39; =&gt; $request-&gt;url(),</span>
+<span class="x">            &#39;duration&#39; =&gt; $duration,</span>
+<span class="x">            &#39;status&#39; =&gt; $response-&gt;getStatusCode(),</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $response;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-service-design">1. Service Design</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Keep services small and focused</span>
+<span class="x">class UserService</span>
+<span class="x">{</span>
+<span class="x">    // Only user-related operations</span>
+<span class="x">    public function createUser($data) { }</span>
+<span class="x">    public function updateUser($id, $data) { }</span>
+<span class="x">    public function deleteUser($id) { }</span>
+<span class="x">    public function getUser($id) { }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-api-design">2. API Design</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use consistent API patterns</span>
+<span class="x">Route::prefix(&#39;api/v1&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::apiResource(&#39;users&#39;, UserController::class);</span>
+<span class="x">    Route::get(&#39;users/{user}/profile&#39;, [UserController::class, &#39;profile&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="3-error-handling">3. Error Handling</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Implement proper error handling</span>
+<span class="x">class ServiceException extends Exception</span>
+<span class="x">{</span>
+<span class="x">    protected $service;</span>
+<span class="x">    protected $statusCode;</span>
+
+<span class="x">    public function __construct($message, $service, $statusCode = 500)</span>
+<span class="x">    {</span>
+<span class="x">        parent::__construct($message);</span>
+<span class="x">        $this-&gt;service = $service;</span>
+<span class="x">        $this-&gt;statusCode = $statusCode;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Handle service failures gracefully</span>
+<span class="x">try {</span>
+<span class="x">    $user = $userService-&gt;getUser($id);</span>
+<span class="x">} catch (ServiceException $e) {</span>
+<span class="x">    return $this-&gt;getFallbackUser($id);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="4-security">4. Security</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Implement service-to-service authentication</span>
+<span class="x">class ServiceAuthMiddleware</span>
+<span class="x">{</span>
+<span class="x">    public function handle($request, Closure $next)</span>
+<span class="x">    {</span>
+<span class="x">        $token = $request-&gt;header(&#39;X-Service-Token&#39;);</span>
+
+<span class="x">        if (!$this-&gt;validateServiceToken($token)) {</span>
+<span class="x">            return response()-&gt;json([&#39;error&#39; =&gt; &#39;Unauthorized&#39;], 401);</span>
+<span class="x">        }</span>
+
+<span class="x">        return $next($request);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="data-consistency">Data Consistency</h2>
+<h3 id="saga-pattern">Saga Pattern</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Saga Coordinator for distributed transactions</span>
+<span class="x">class CreateUserSaga</span>
+<span class="x">{</span>
+<span class="x">    public function execute($userData)</span>
+<span class="x">    {</span>
+<span class="x">        try {</span>
+<span class="x">            // Step 1: Create user</span>
+<span class="x">            $user = $this-&gt;createUser($userData);</span>
+
+<span class="x">            // Step 2: Create user profile</span>
+<span class="x">            $profile = $this-&gt;createProfile($user);</span>
+
+<span class="x">            // Step 3: Send welcome email</span>
+<span class="x">            $this-&gt;sendWelcomeEmail($user);</span>
+
+<span class="x">            return $user;</span>
+<span class="x">        } catch (Exception $e) {</span>
+<span class="x">            // Compensate for failures</span>
+<span class="x">            $this-&gt;compensate($user);</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function compensate($user)</span>
+<span class="x">    {</span>
+<span class="x">        if ($user) {</span>
+<span class="x">            $this-&gt;deleteUser($user);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>Building microservices with Laravel involves:</p>
+<ul>
+<li><strong>Service Design</strong>: Breaking down applications into focused services</li>
+<li><strong>Communication</strong>: Implementing service-to-service communication patterns</li>
+<li><strong>API Gateway</strong>: Centralizing API management and routing</li>
+<li><strong>Service Discovery</strong>: Managing service registration and discovery</li>
+<li><strong>Circuit Breaker</strong>: Handling service failures gracefully</li>
+<li><strong>Deployment</strong>: Using containerization and orchestration</li>
+<li><strong>Monitoring</strong>: Implementing observability and health checks</li>
+</ul>
+<p>Microservices offer scalability and flexibility but require careful design and management to be successful.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/15-microservices.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="14-performance.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 07-migrations: Migrations - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 07-migrations: Migrations</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-table"></i> Chapter 07-migrations: Migrations
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-7-database-migrations">Chapter 7: Database Migrations</h1>
+<h2 id="what-are-migrations">What are Migrations?</h2>
+<p>Migrations are like version control for your database. They allow you to define and modify your database schema in a structured and organized way. Each migration file represents a change to your database structure, and Laravel keeps track of which migrations have been run.</p>
+<h2 id="creating-migrations">Creating Migrations</h2>
+<h3 id="using-artisan-command">Using Artisan Command</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Basic migration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>create_users_table
+
+<span class="c1"># Migration for existing table</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>add_email_to_users_table
+
+<span class="c1"># Migration with model</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>User<span class="w"> </span>-m
+
+<span class="c1"># Migration with model and factory</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Post<span class="w"> </span>-mf
+
+<span class="c1"># Migration with model, factory, and seeder</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Category<span class="w"> </span>-mfs
+</code></pre></div>
+
+<h3 id="migration-file-structure">Migration File Structure</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Migrations\Migration</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Schema\Blueprint</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Schema</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="k">new</span> <span class="k">class</span> <span class="k">extends</span> <span class="nx">Migration</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Run the migrations.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">up</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">Schema</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">,</span> <span class="k">function</span> <span class="p">(</span><span class="nx">Blueprint</span> <span class="nv">$table</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">();</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">unique</span><span class="p">();</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">timestamp</span><span class="p">(</span><span class="s1">&#39;email_verified_at&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">nullable</span><span class="p">();</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">string</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">);</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">rememberToken</span><span class="p">();</span>
+            <span class="nv">$table</span><span class="o">-&gt;</span><span class="na">timestamps</span><span class="p">();</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Reverse the migrations.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">down</span><span class="p">()</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nx">Schema</span><span class="o">::</span><span class="na">dropIfExists</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<h2 id="column-types">Column Types</h2>
+<h3 id="basic-column-types">Basic Column Types</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    // String columns</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;, 100); // With length</span>
+<span class="x">    $table-&gt;text(&#39;description&#39;);</span>
+<span class="x">    $table-&gt;longText(&#39;content&#39;);</span>
+
+<span class="x">    // Numeric columns</span>
+<span class="x">    $table-&gt;integer(&#39;age&#39;);</span>
+<span class="x">    $table-&gt;bigInteger(&#39;phone&#39;);</span>
+<span class="x">    $table-&gt;decimal(&#39;price&#39;, 8, 2); // 8 digits, 2 decimal places</span>
+<span class="x">    $table-&gt;float(&#39;rating&#39;, 3, 2);</span>
+<span class="x">    $table-&gt;double(&#39;amount&#39;, 10, 2);</span>
+
+<span class="x">    // Boolean columns</span>
+<span class="x">    $table-&gt;boolean(&#39;is_active&#39;);</span>
+<span class="x">    $table-&gt;boolean(&#39;is_admin&#39;)-&gt;default(false);</span>
+
+<span class="x">    // Date and time columns</span>
+<span class="x">    $table-&gt;date(&#39;birth_date&#39;);</span>
+<span class="x">    $table-&gt;dateTime(&#39;last_login&#39;);</span>
+<span class="x">    $table-&gt;timestamp(&#39;email_verified_at&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;time(&#39;start_time&#39;);</span>
+<span class="x">    $table-&gt;year(&#39;birth_year&#39;);</span>
+
+<span class="x">    // JSON columns</span>
+<span class="x">    $table-&gt;json(&#39;settings&#39;);</span>
+<span class="x">    $table-&gt;jsonb(&#39;metadata&#39;); // PostgreSQL only</span>
+
+<span class="x">    // Binary columns</span>
+<span class="x">    $table-&gt;binary(&#39;avatar&#39;);</span>
+
+<span class="x">    // UUID columns</span>
+<span class="x">    $table-&gt;uuid(&#39;id&#39;)-&gt;primary();</span>
+<span class="x">    $table-&gt;uuidMorphs(&#39;taggable&#39;);</span>
+
+<span class="x">    // Enum columns</span>
+<span class="x">    $table-&gt;enum(&#39;status&#39;, [&#39;active&#39;, &#39;inactive&#39;, &#39;pending&#39;]);</span>
+<span class="x">    $table-&gt;set(&#39;options&#39;, [&#39;option1&#39;, &#39;option2&#39;, &#39;option3&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="column-modifiers">Column Modifiers</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    // Nullable columns</span>
+<span class="x">    $table-&gt;string(&#39;middle_name&#39;)-&gt;nullable();</span>
+
+<span class="x">    // Default values</span>
+<span class="x">    $table-&gt;boolean(&#39;is_active&#39;)-&gt;default(true);</span>
+<span class="x">    $table-&gt;string(&#39;role&#39;)-&gt;default(&#39;user&#39;);</span>
+
+<span class="x">    // Auto-incrementing</span>
+<span class="x">    $table-&gt;id(); // Same as $table-&gt;bigIncrements(&#39;id&#39;);</span>
+<span class="x">    $table-&gt;increments(&#39;id&#39;); // Integer auto-increment</span>
+<span class="x">    $table-&gt;smallIncrements(&#39;id&#39;); // Small integer auto-increment</span>
+<span class="x">    $table-&gt;mediumIncrements(&#39;id&#39;); // Medium integer auto-increment</span>
+
+<span class="x">    // Unsigned columns</span>
+<span class="x">    $table-&gt;unsignedInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;post_id&#39;);</span>
+
+<span class="x">    // Comment</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;)-&gt;comment(&#39;User email address&#39;);</span>
+
+<span class="x">    // After column</span>
+<span class="x">    $table-&gt;string(&#39;last_name&#39;)-&gt;after(&#39;first_name&#39;);</span>
+
+<span class="x">    // First column</span>
+<span class="x">    $table-&gt;string(&#39;priority&#39;)-&gt;first();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="indexes">Indexes</h2>
+<h3 id="creating-indexes">Creating Indexes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;)-&gt;unique(); // Unique index</span>
+<span class="x">    $table-&gt;string(&#39;username&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;city&#39;);</span>
+<span class="x">    $table-&gt;integer(&#39;age&#39;);</span>
+
+<span class="x">    // Single column indexes</span>
+<span class="x">    $table-&gt;index(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;index([&#39;name&#39;, &#39;email&#39;]);</span>
+
+<span class="x">    // Named indexes</span>
+<span class="x">    $table-&gt;index([&#39;name&#39;, &#39;email&#39;], &#39;users_name_email_index&#39;);</span>
+
+<span class="x">    // Unique indexes</span>
+<span class="x">    $table-&gt;unique(&#39;email&#39;);</span>
+<span class="x">    $table-&gt;unique([&#39;name&#39;, &#39;email&#39;]);</span>
+
+<span class="x">    // Sparse indexes (nullable columns)</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable()-&gt;index();</span>
+
+<span class="x">    // Full-text indexes (MySQL)</span>
+<span class="x">    $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;fullText(&#39;content&#39;);</span>
+
+<span class="x">    // Spatial indexes</span>
+<span class="x">    $table-&gt;point(&#39;location&#39;);</span>
+<span class="x">    $table-&gt;spatialIndex(&#39;location&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="adding-indexes-to-existing-tables">Adding Indexes to Existing Tables</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;index(&#39;email&#39;);</span>
+<span class="x">    $table-&gt;unique(&#39;username&#39;);</span>
+<span class="x">    $table-&gt;index([&#39;name&#39;, &#39;email&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="dropping-indexes">Dropping Indexes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;dropIndex([&#39;email&#39;]);</span>
+<span class="x">    $table-&gt;dropUnique([&#39;username&#39;]);</span>
+<span class="x">    $table-&gt;dropIndex(&#39;users_name_email_index&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="foreign-keys">Foreign Keys</h2>
+<h3 id="creating-foreign-keys">Creating Foreign Keys</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">    $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;category_id&#39;);</span>
+
+<span class="x">    // Foreign key constraints</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;users&#39;);</span>
+<span class="x">    $table-&gt;foreign(&#39;category_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;categories&#39;);</span>
+
+<span class="x">    // With cascade options</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)</span>
+<span class="x">        -&gt;references(&#39;id&#39;)</span>
+<span class="x">        -&gt;on(&#39;users&#39;)</span>
+<span class="x">        -&gt;onDelete(&#39;cascade&#39;)</span>
+<span class="x">        -&gt;onUpdate(&#39;cascade&#39;);</span>
+
+<span class="x">    // With custom constraint name</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;, &#39;posts_user_id_foreign&#39;)</span>
+<span class="x">        -&gt;references(&#39;id&#39;)</span>
+<span class="x">        -&gt;on(&#39;users&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="foreign-key-options">Foreign Key Options</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cascade delete</span>
+<span class="x">$table-&gt;foreign(&#39;user_id&#39;)</span>
+<span class="x">    -&gt;references(&#39;id&#39;)</span>
+<span class="x">    -&gt;on(&#39;users&#39;)</span>
+<span class="x">    -&gt;onDelete(&#39;cascade&#39;);</span>
+
+<span class="x">// Set null on delete</span>
+<span class="x">$table-&gt;foreign(&#39;user_id&#39;)</span>
+<span class="x">    -&gt;references(&#39;id&#39;)</span>
+<span class="x">    -&gt;on(&#39;users&#39;)</span>
+<span class="x">    -&gt;onDelete(&#39;set null&#39;);</span>
+
+<span class="x">// Restrict delete</span>
+<span class="x">$table-&gt;foreign(&#39;user_id&#39;)</span>
+<span class="x">    -&gt;references(&#39;id&#39;)</span>
+<span class="x">    -&gt;on(&#39;users&#39;)</span>
+<span class="x">    -&gt;onDelete(&#39;restrict&#39;);</span>
+
+<span class="x">// No action</span>
+<span class="x">$table-&gt;foreign(&#39;user_id&#39;)</span>
+<span class="x">    -&gt;references(&#39;id&#39;)</span>
+<span class="x">    -&gt;on(&#39;users&#39;)</span>
+<span class="x">    -&gt;onDelete(&#39;no action&#39;);</span>
+</code></pre></div>
+
+<h3 id="dropping-foreign-keys">Dropping Foreign Keys</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;dropForeign([&#39;user_id&#39;]);</span>
+<span class="x">    $table-&gt;dropForeign(&#39;posts_user_id_foreign&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="common-migration-patterns">Common Migration Patterns</h2>
+<h3 id="creating-tables">Creating Tables</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;timestamp(&#39;email_verified_at&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;string(&#39;password&#39;);</span>
+<span class="x">    $table-&gt;enum(&#39;role&#39;, [&#39;user&#39;, &#39;admin&#39;, &#39;moderator&#39;])-&gt;default(&#39;user&#39;);</span>
+<span class="x">    $table-&gt;boolean(&#39;is_active&#39;)-&gt;default(true);</span>
+<span class="x">    $table-&gt;json(&#39;settings&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;rememberToken();</span>
+<span class="x">    $table-&gt;timestamps();</span>
+
+<span class="x">    // Indexes</span>
+<span class="x">    $table-&gt;index([&#39;name&#39;, &#39;email&#39;]);</span>
+<span class="x">    $table-&gt;index(&#39;created_at&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="adding-columns">Adding Columns</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable()-&gt;after(&#39;email&#39;);</span>
+<span class="x">    $table-&gt;date(&#39;birth_date&#39;)-&gt;nullable()-&gt;after(&#39;phone&#39;);</span>
+<span class="x">    $table-&gt;text(&#39;bio&#39;)-&gt;nullable()-&gt;after(&#39;birth_date&#39;);</span>
+<span class="x">    $table-&gt;boolean(&#39;newsletter&#39;)-&gt;default(false)-&gt;after(&#39;bio&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="modifying-columns">Modifying Columns</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    // Change column type</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;, 100)-&gt;change();</span>
+
+<span class="x">    // Make column nullable</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable()-&gt;change();</span>
+
+<span class="x">    // Add default value</span>
+<span class="x">    $table-&gt;boolean(&#39;is_active&#39;)-&gt;default(true)-&gt;change();</span>
+
+<span class="x">    // Rename column</span>
+<span class="x">    $table-&gt;renameColumn(&#39;old_name&#39;, &#39;new_name&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="dropping-columns">Dropping Columns</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;dropColumn(&#39;phone&#39;);</span>
+<span class="x">    $table-&gt;dropColumn([&#39;phone&#39;, &#39;birth_date&#39;, &#39;bio&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="running-migrations">Running Migrations</h2>
+<h3 id="basic-commands">Basic Commands</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run all pending migrations</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate
+
+<span class="c1"># Run migrations with output</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate<span class="w"> </span>--verbose
+
+<span class="c1"># Run migrations in production</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate<span class="w"> </span>--force
+
+<span class="c1"># Check migration status</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:status
+
+<span class="c1"># Rollback last batch</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:rollback
+
+<span class="c1"># Rollback specific number of steps</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:rollback<span class="w"> </span>--step<span class="o">=</span><span class="m">2</span>
+
+<span class="c1"># Reset all migrations</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:reset
+
+<span class="c1"># Refresh migrations (reset + migrate)</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:refresh
+
+<span class="c1"># Refresh with seed</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:refresh<span class="w"> </span>--seed
+
+<span class="c1"># Fresh start (drop all tables + migrate)</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:fresh
+
+<span class="c1"># Fresh with seed</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate:fresh<span class="w"> </span>--seed
+</code></pre></div>
+
+<h3 id="migration-status">Migration Status</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate:status
+</code></pre></div>
+
+<p>Output:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">+------+------------------------------------------------+-------+</span>
+<span class="c">| Ran? | Migration                                       | Batch |</span>
+<span class="nb">+------+------------------------------------------------+-------+</span>
+<span class="c">| Y    | 2014_10_12_000000_create_users_table           | 1     |</span>
+<span class="c">| Y    | 2014_10_12_100000_create_password_resets_table | 1     |</span>
+<span class="c">| N    | 2019_08_19_000000_create_failed_jobs_table     | </span><span class="nb">-</span><span class="c">     |</span>
+<span class="nb">+------+------------------------------------------------+-------+</span>
+</code></pre></div>
+
+<h2 id="migration-best-practices">Migration Best Practices</h2>
+<h3 id="1-use-descriptive-names">1. Use Descriptive Names</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Good</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>create_users_table
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>add_email_verification_to_users_table
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>create_posts_table
+
+<span class="c1"># Bad</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>migration_1
+php<span class="w"> </span>artisan<span class="w"> </span>make:migration<span class="w"> </span>update_table
+</code></pre></div>
+
+<h3 id="2-keep-migrations-small-and-focused">2. Keep Migrations Small and Focused</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good - Single purpose migration</span>
+<span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable();</span>
+<span class="x">});</span>
+
+<span class="x">// Bad - Multiple unrelated changes</span>
+<span class="x">Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;string(&#39;address&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;integer(&#39;age&#39;)-&gt;nullable();</span>
+<span class="x">    // ... many more changes</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="3-always-include-down-method">3. Always Include Down Method</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function down(): void</span>
+<span class="x">{</span>
+<span class="x">    Schema::table(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">        $table-&gt;dropColumn(&#39;phone&#39;);</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="4-use-proper-data-types">4. Use Proper Data Types</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">$table-&gt;decimal(&#39;price&#39;, 8, 2); // For currency</span>
+<span class="x">$table-&gt;text(&#39;description&#39;); // For long text</span>
+<span class="x">$table-&gt;json(&#39;settings&#39;); // For structured data</span>
+
+<span class="x">// Bad</span>
+<span class="x">$table-&gt;string(&#39;price&#39;); // Could lose precision</span>
+<span class="x">$table-&gt;string(&#39;description&#39;, 1000); // Limited length</span>
+<span class="x">$table-&gt;text(&#39;settings&#39;); // Not structured</span>
+</code></pre></div>
+
+<h3 id="5-add-indexes-for-performance">5. Add Indexes for Performance</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">    $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;enum(&#39;status&#39;, [&#39;draft&#39;, &#39;published&#39;, &#39;archived&#39;]);</span>
+<span class="x">    $table-&gt;timestamps();</span>
+
+<span class="x">    // Indexes for common queries</span>
+<span class="x">    $table-&gt;index(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;status&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;created_at&#39;);</span>
+<span class="x">    $table-&gt;index([&#39;user_id&#39;, &#39;status&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="6-use-foreign-keys-for-data-integrity">6. Use Foreign Keys for Data Integrity</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;category_id&#39;);</span>
+
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;users&#39;);</span>
+<span class="x">    $table-&gt;foreign(&#39;category_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;categories&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="advanced-migration-features">Advanced Migration Features</h2>
+<h3 id="raw-sql">Raw SQL</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+
+<span class="x">    // Raw SQL for complex operations</span>
+<span class="x">    DB::statement(&#39;ALTER TABLE users ADD FULLTEXT(name)&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="conditional-migrations">Conditional Migrations</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+
+<span class="x">    // Only add column if database supports it</span>
+<span class="x">    if (DB::connection()-&gt;getDriverName() === &#39;mysql&#39;) {</span>
+<span class="x">        $table-&gt;fullText(&#39;name&#39;);</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="custom-migration-commands">Custom Migration Commands</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In your migration</span>
+<span class="x">public function up(): void</span>
+<span class="x">{</span>
+<span class="x">    Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">        $table-&gt;id();</span>
+<span class="x">        $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">        $table-&gt;string(&#39;email&#39;)-&gt;unique();</span>
+<span class="x">        $table-&gt;timestamps();</span>
+<span class="x">    });</span>
+
+<span class="x">    // Insert default data</span>
+<span class="x">    DB::table(&#39;users&#39;)-&gt;insert([</span>
+<span class="x">        &#39;name&#39; =&gt; &#39;Admin User&#39;,</span>
+<span class="x">        &#39;email&#39; =&gt; &#39;admin@example.com&#39;,</span>
+<span class="x">        &#39;created_at&#39; =&gt; now(),</span>
+<span class="x">        &#39;updated_at&#39; =&gt; now(),</span>
+<span class="x">    ]);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="migration-examples">Migration Examples</h2>
+<h3 id="users-table">Users Table</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;users&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;name&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;email&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;string(&#39;username&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;timestamp(&#39;email_verified_at&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;string(&#39;password&#39;);</span>
+<span class="x">    $table-&gt;enum(&#39;role&#39;, [&#39;user&#39;, &#39;admin&#39;, &#39;moderator&#39;])-&gt;default(&#39;user&#39;);</span>
+<span class="x">    $table-&gt;boolean(&#39;is_active&#39;)-&gt;default(true);</span>
+<span class="x">    $table-&gt;string(&#39;phone&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;date(&#39;birth_date&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;text(&#39;bio&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;json(&#39;settings&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;string(&#39;avatar&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;timestamp(&#39;last_login_at&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;rememberToken();</span>
+<span class="x">    $table-&gt;timestamps();</span>
+<span class="x">    $table-&gt;softDeletes();</span>
+
+<span class="x">    // Indexes</span>
+<span class="x">    $table-&gt;index([&#39;name&#39;, &#39;email&#39;]);</span>
+<span class="x">    $table-&gt;index(&#39;role&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;is_active&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;created_at&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="posts-table">Posts Table</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;posts&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;string(&#39;title&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;slug&#39;)-&gt;unique();</span>
+<span class="x">    $table-&gt;text(&#39;excerpt&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;longText(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;string(&#39;featured_image&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;enum(&#39;status&#39;, [&#39;draft&#39;, &#39;published&#39;, &#39;archived&#39;])-&gt;default(&#39;draft&#39;);</span>
+<span class="x">    $table-&gt;boolean(&#39;is_featured&#39;)-&gt;default(false);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;category_id&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;json(&#39;meta&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;timestamp(&#39;published_at&#39;)-&gt;nullable();</span>
+<span class="x">    $table-&gt;timestamps();</span>
+<span class="x">    $table-&gt;softDeletes();</span>
+
+<span class="x">    // Foreign keys</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;users&#39;)-&gt;onDelete(&#39;cascade&#39;);</span>
+<span class="x">    $table-&gt;foreign(&#39;category_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;categories&#39;)-&gt;onDelete(&#39;set null&#39;);</span>
+
+<span class="x">    // Indexes</span>
+<span class="x">    $table-&gt;index(&#39;slug&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;status&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;is_featured&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;published_at&#39;);</span>
+<span class="x">    $table-&gt;index([&#39;user_id&#39;, &#39;status&#39;]);</span>
+<span class="x">    $table-&gt;index([&#39;category_id&#39;, &#39;status&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="comments-table">Comments Table</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">Schema::create(&#39;comments&#39;, function (Blueprint $table) {</span>
+<span class="x">    $table-&gt;id();</span>
+<span class="x">    $table-&gt;text(&#39;content&#39;);</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;user_id&#39;);</span>
+<span class="x">    $table-&gt;morphs(&#39;commentable&#39;); // Creates commentable_type and commentable_id</span>
+<span class="x">    $table-&gt;unsignedBigInteger(&#39;parent_id&#39;)-&gt;nullable(); // For nested comments</span>
+<span class="x">    $table-&gt;boolean(&#39;is_approved&#39;)-&gt;default(false);</span>
+<span class="x">    $table-&gt;timestamps();</span>
+<span class="x">    $table-&gt;softDeletes();</span>
+
+<span class="x">    // Foreign keys</span>
+<span class="x">    $table-&gt;foreign(&#39;user_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;users&#39;)-&gt;onDelete(&#39;cascade&#39;);</span>
+<span class="x">    $table-&gt;foreign(&#39;parent_id&#39;)-&gt;references(&#39;id&#39;)-&gt;on(&#39;comments&#39;)-&gt;onDelete(&#39;cascade&#39;);</span>
+
+<span class="x">    // Indexes</span>
+<span class="x">    $table-&gt;index(&#39;commentable_type&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;commentable_id&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;parent_id&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;is_approved&#39;);</span>
+<span class="x">    $table-&gt;index(&#39;created_at&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Creating and running migrations</li>
+<li>✅ Column types and modifiers</li>
+<li>✅ Indexes and foreign keys</li>
+<li>✅ Common migration patterns</li>
+<li>✅ Migration commands and status</li>
+<li>✅ Best practices for migrations</li>
+<li>✅ Advanced migration features</li>
+<li>✅ Real-world migration examples</li>
+</ul>
+<p>Migrations provide a powerful way to manage your database schema. In the next chapter, we'll explore middleware for filtering HTTP requests.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/07-migrations.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="06-eloquent.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="08-middleware.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

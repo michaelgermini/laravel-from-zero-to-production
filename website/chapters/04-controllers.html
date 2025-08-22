@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 04-controllers: Controllers - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 04-controllers: Controllers</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-cogs"></i> Chapter 04-controllers: Controllers
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-4-controllers">Chapter 4: Controllers</h1>
+<h2 id="what-are-controllers">What are Controllers?</h2>
+<p>Controllers are the heart of your Laravel application's logic. They handle incoming HTTP requests and return responses to the user. Controllers help you organize your application logic by grouping related request handling logic into a single class.</p>
+<h2 id="creating-controllers">Creating Controllers</h2>
+<h3 id="using-artisan-command">Using Artisan Command</h3>
+<p>The easiest way to create a controller is using the Artisan command:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Basic controller</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>UserController
+
+<span class="c1"># Resource controller (with CRUD methods)</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>PostController<span class="w"> </span>--resource
+
+<span class="c1"># API resource controller</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>Api/UserController<span class="w"> </span>--api
+
+<span class="c1"># Controller with model</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>PostController<span class="w"> </span>--resource<span class="w"> </span>--model<span class="o">=</span>Post
+</code></pre></div>
+
+<h3 id="manual-creation">Manual Creation</h3>
+<p>You can also create controllers manually by creating a PHP file in the <code>app/Http/Controllers</code> directory:</p>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.index&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="basic-controller-structure">Basic Controller Structure</h2>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Display a listing of the resource.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$users</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.index&#39;</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span><span class="s1">&#39;users&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Show the form for creating a new resource.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.create&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Store a newly created resource in storage.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$validated</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|email|unique:users&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|min:8&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="nx">User</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$validated</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;users.index&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;User created successfully!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Display the specified resource.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.show&#39;</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Show the form for editing the specified resource.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">edit</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.edit&#39;</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Update the specified resource in storage.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$validated</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|email|unique:users,email,&#39;</span> <span class="o">.</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">(</span><span class="nv">$validated</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;users.index&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;User updated successfully!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Remove the specified resource from storage.</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">destroy</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;users.index&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;User deleted successfully!&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="controller-methods">Controller Methods</h2>
+<h3 id="basic-methods">Basic Methods</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function index()</span>
+<span class="x">{</span>
+<span class="x">    // Display a list of resources</span>
+<span class="x">    return view(&#39;users.index&#39;);</span>
+<span class="x">}</span>
+
+<span class="x">public function show($id)</span>
+<span class="x">{</span>
+<span class="x">    // Display a specific resource</span>
+<span class="x">    $user = User::findOrFail($id);</span>
+<span class="x">    return view(&#39;users.show&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">public function create()</span>
+<span class="x">{</span>
+<span class="x">    // Show form to create a new resource</span>
+<span class="x">    return view(&#39;users.create&#39;);</span>
+<span class="x">}</span>
+
+<span class="x">public function store(Request $request)</span>
+<span class="x">{</span>
+<span class="x">    // Store a new resource</span>
+<span class="x">    // Validation and storage logic</span>
+<span class="x">}</span>
+
+<span class="x">public function edit($id)</span>
+<span class="x">{</span>
+<span class="x">    // Show form to edit a resource</span>
+<span class="x">    $user = User::findOrFail($id);</span>
+<span class="x">    return view(&#39;users.edit&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">public function update(Request $request, $id)</span>
+<span class="x">{</span>
+<span class="x">    // Update an existing resource</span>
+<span class="x">    // Validation and update logic</span>
+<span class="x">}</span>
+
+<span class="x">public function destroy($id)</span>
+<span class="x">{</span>
+<span class="x">    // Delete a resource</span>
+<span class="x">    $user = User::findOrFail($id);</span>
+<span class="x">    $user-&gt;delete();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="custom-methods">Custom Methods</h3>
+<p>You can add custom methods to your controllers:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function profile()</span>
+<span class="x">{</span>
+<span class="x">    $user = auth()-&gt;user();</span>
+<span class="x">    return view(&#39;users.profile&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">public function search(Request $request)</span>
+<span class="x">{</span>
+<span class="x">    $query = $request-&gt;get(&#39;q&#39;);</span>
+<span class="x">    $users = User::where(&#39;name&#39;, &#39;like&#39;, &quot;%{$query}%&quot;)-&gt;get();</span>
+<span class="x">    return view(&#39;users.search&#39;, compact(&#39;users&#39;, &#39;query&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">public function export()</span>
+<span class="x">{</span>
+<span class="x">    $users = User::all();</span>
+<span class="x">    return response()-&gt;json($users);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="route-model-binding">Route Model Binding</h2>
+<p>Laravel automatically injects model instances into your controller methods:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Route: Route::get(&#39;/users/{user}&#39;, [UserController::class, &#39;show&#39;]);</span>
+
+<span class="x">public function show(User $user)</span>
+<span class="x">{</span>
+<span class="x">    // Laravel automatically finds the User model by ID</span>
+<span class="x">    return view(&#39;users.show&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="custom-route-model-binding">Custom Route Model Binding</h3>
+<p>You can customize how models are resolved:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// In RouteServiceProvider</span>
+<span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    Route::model(&#39;user&#39;, User::class);</span>
+
+<span class="x">    // Or with custom logic</span>
+<span class="x">    Route::bind(&#39;user&#39;, function ($value) {</span>
+<span class="x">        return User::where(&#39;username&#39;, $value)-&gt;firstOrFail();</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="request-handling">Request Handling</h2>
+<h3 id="basic-request-handling">Basic Request Handling</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function store(Request $request)</span>
+<span class="x">{</span>
+<span class="x">    // Access request data</span>
+<span class="x">    $name = $request-&gt;input(&#39;name&#39;);</span>
+<span class="x">    $email = $request-&gt;email; // Shorthand</span>
+
+<span class="x">    // Check if field exists</span>
+<span class="x">    if ($request-&gt;has(&#39;newsletter&#39;)) {</span>
+<span class="x">        // Handle newsletter subscription</span>
+<span class="x">    }</span>
+
+<span class="x">    // Get all input</span>
+<span class="x">    $data = $request-&gt;all();</span>
+
+<span class="x">    // Get only specific fields</span>
+<span class="x">    $data = $request-&gt;only([&#39;name&#39;, &#39;email&#39;]);</span>
+
+<span class="x">    // Get all except specific fields</span>
+<span class="x">    $data = $request-&gt;except([&#39;password&#39;]);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="form-request-validation">Form Request Validation</h3>
+<p>Create custom form request classes for validation:</p>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:request<span class="w"> </span>StoreUserRequest
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Requests</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Http\FormRequest</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">StoreUserRequest</span> <span class="k">extends</span> <span class="nx">FormRequest</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">authorize</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// Or add authorization logic</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">rules</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|email|unique:users&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|min:8|confirmed&#39;</span><span class="p">,</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">messages</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="s1">&#39;name.required&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;The name field is required.&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email.unique&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;This email is already taken.&#39;</span><span class="p">,</span>
+        <span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Use in controller:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function store(StoreUserRequest $request)</span>
+<span class="x">{</span>
+<span class="x">    // Validation is automatically handled</span>
+<span class="x">    $validated = $request-&gt;validated();</span>
+
+<span class="x">    User::create($validated);</span>
+
+<span class="x">    return redirect()-&gt;route(&#39;users.index&#39;);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="response-types">Response Types</h2>
+<h3 id="view-responses">View Responses</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function index()</span>
+<span class="x">{</span>
+<span class="x">    $users = User::all();</span>
+<span class="x">    return view(&#39;users.index&#39;, compact(&#39;users&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">// With additional data</span>
+<span class="x">return view(&#39;users.show&#39;, [</span>
+<span class="x">    &#39;user&#39; =&gt; $user,</span>
+<span class="x">    &#39;posts&#39; =&gt; $user-&gt;posts,</span>
+<span class="x">    &#39;title&#39; =&gt; &#39;User Profile&#39;</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<h3 id="json-responses">JSON Responses</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function api()</span>
+<span class="x">{</span>
+<span class="x">    $users = User::all();</span>
+<span class="x">    return response()-&gt;json($users);</span>
+<span class="x">}</span>
+
+<span class="x">// With status code</span>
+<span class="x">return response()-&gt;json([&#39;message&#39; =&gt; &#39;User created&#39;], 201);</span>
+
+<span class="x">// With headers</span>
+<span class="x">return response()-&gt;json($data, 200, [</span>
+<span class="x">    &#39;Content-Type&#39; =&gt; &#39;application/json&#39;,</span>
+<span class="x">    &#39;X-Custom-Header&#39; =&gt; &#39;value&#39;</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<h3 id="redirect-responses">Redirect Responses</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Simple redirect</span>
+<span class="x">return redirect(&#39;/users&#39;);</span>
+
+<span class="x">// Redirect to named route</span>
+<span class="x">return redirect()-&gt;route(&#39;users.index&#39;);</span>
+
+<span class="x">// Redirect with data</span>
+<span class="x">return redirect()-&gt;route(&#39;users.index&#39;)-&gt;with(&#39;success&#39;, &#39;User created!&#39;);</span>
+
+<span class="x">// Redirect back</span>
+<span class="x">return redirect()-&gt;back();</span>
+
+<span class="x">// Redirect with input</span>
+<span class="x">return redirect()-&gt;back()-&gt;withInput();</span>
+</code></pre></div>
+
+<h3 id="file-responses">File Responses</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function download()</span>
+<span class="x">{</span>
+<span class="x">    $path = storage_path(&#39;app/public/file.pdf&#39;);</span>
+<span class="x">    return response()-&gt;download($path);</span>
+<span class="x">}</span>
+
+<span class="x">public function stream()</span>
+<span class="x">{</span>
+<span class="x">    $path = storage_path(&#39;app/public/file.pdf&#39;);</span>
+<span class="x">    return response()-&gt;file($path);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="controller-organization">Controller Organization</h2>
+<h3 id="single-action-controllers">Single Action Controllers</h3>
+<p>For simple actions, you can use single action controllers:</p>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>ShowUserProfile<span class="w"> </span>--invokable
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ShowUserProfile</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__invoke</span><span class="p">(</span><span class="nv">$id</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">findOrFail</span><span class="p">(</span><span class="nv">$id</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;users.profile&#39;</span><span class="p">,</span> <span class="nb">compact</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Route:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">Route::get(&#39;/users/{id}/profile&#39;, ShowUserProfile::class);</span>
+</code></pre></div>
+
+<h3 id="api-controllers">API Controllers</h3>
+<p>API controllers are optimized for API responses:</p>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:controller<span class="w"> </span>Api/UserController<span class="w"> </span>--api
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Api</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">UserController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$users</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">all</span><span class="p">();</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$users</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">store</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$validated</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|email|unique:users&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$validated</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$user</span><span class="p">,</span> <span class="mi">201</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">show</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$validated</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;sometimes|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;sometimes|email|unique:users,email,&#39;</span> <span class="o">.</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">(</span><span class="nv">$validated</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$user</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">destroy</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="k">null</span><span class="p">,</span> <span class="mi">204</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="middleware-in-controllers">Middleware in Controllers</h2>
+<h3 id="applying-middleware">Applying Middleware</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class UserController extends Controller</span>
+<span class="x">{</span>
+<span class="x">    public function __construct()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;middleware(&#39;auth&#39;);</span>
+<span class="x">        $this-&gt;middleware(&#39;admin&#39;)-&gt;only([&#39;destroy&#39;]);</span>
+<span class="x">        $this-&gt;middleware(&#39;verified&#39;)-&gt;except([&#39;index&#39;, &#39;show&#39;]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="conditional-middleware">Conditional Middleware</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">public function __construct()</span>
+<span class="x">{</span>
+<span class="x">    $this-&gt;middleware(&#39;auth&#39;)-&gt;only([&#39;edit&#39;, &#39;update&#39;, &#39;destroy&#39;]);</span>
+<span class="x">    $this-&gt;middleware(&#39;admin&#39;)-&gt;when(function ($request) {</span>
+<span class="x">        return $request-&gt;is(&#39;admin/*&#39;);</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="resource-controllers">Resource Controllers</h2>
+<p>Resource controllers provide all the CRUD operations:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Route definition</span>
+<span class="x">Route::resource(&#39;users&#39;, UserController::class);</span>
+
+<span class="x">// This creates the following routes:</span>
+<span class="x">// GET    /users              index   users.index</span>
+<span class="x">// GET    /users/create       create  users.create</span>
+<span class="x">// POST   /users              store   users.store</span>
+<span class="x">// GET    /users/{user}       show    users.show</span>
+<span class="x">// GET    /users/{user}/edit  edit    users.edit</span>
+<span class="x">// PUT    /users/{user}       update  users.update</span>
+<span class="x">// DELETE /users/{user}       destroy users.destroy</span>
+</code></pre></div>
+
+<h3 id="partial-resource-routes">Partial Resource Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Only specific methods</span>
+<span class="x">Route::resource(&#39;users&#39;, UserController::class)-&gt;only([&#39;index&#39;, &#39;show&#39;]);</span>
+
+<span class="x">// All except specific methods</span>
+<span class="x">Route::resource(&#39;users&#39;, UserController::class)-&gt;except([&#39;destroy&#39;]);</span>
+
+<span class="x">// Nested resources</span>
+<span class="x">Route::resource(&#39;users.posts&#39;, PostController::class);</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-keep-controllers-thin">1. Keep Controllers Thin</h3>
+<p>Controllers should be thin and focused on handling HTTP requests. Move business logic to services or models.</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">public function store(StoreUserRequest $request)</span>
+<span class="x">{</span>
+<span class="x">    $user = UserService::create($request-&gt;validated());</span>
+<span class="x">    return redirect()-&gt;route(&#39;users.show&#39;, $user);</span>
+<span class="x">}</span>
+
+<span class="x">// Bad</span>
+<span class="x">public function store(Request $request)</span>
+<span class="x">{</span>
+<span class="x">    // Too much business logic in controller</span>
+<span class="x">    $data = $request-&gt;all();</span>
+<span class="x">    $user = new User();</span>
+<span class="x">    $user-&gt;name = $data[&#39;name&#39;];</span>
+<span class="x">    $user-&gt;email = $data[&#39;email&#39;];</span>
+<span class="x">    $user-&gt;password = Hash::make($data[&#39;password&#39;]);</span>
+<span class="x">    $user-&gt;save();</span>
+<span class="x">    // ... more logic</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-use-form-requests">2. Use Form Requests</h3>
+<p>Use form request classes for validation and authorization:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function store(StoreUserRequest $request)</span>
+<span class="x">{</span>
+<span class="x">    // Validation is handled automatically</span>
+<span class="x">    $user = User::create($request-&gt;validated());</span>
+<span class="x">    return redirect()-&gt;route(&#39;users.show&#39;, $user);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="3-use-route-model-binding">3. Use Route Model Binding</h3>
+<p>Let Laravel handle model resolution:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">public function show(User $user)</span>
+<span class="x">{</span>
+<span class="x">    return view(&#39;users.show&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+
+<span class="x">// Bad</span>
+<span class="x">public function show($id)</span>
+<span class="x">{</span>
+<span class="x">    $user = User::findOrFail($id);</span>
+<span class="x">    return view(&#39;users.show&#39;, compact(&#39;user&#39;));</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="4-consistent-response-patterns">4. Consistent Response Patterns</h3>
+<p>Use consistent response patterns throughout your application:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function store(StoreUserRequest $request)</span>
+<span class="x">{</span>
+<span class="x">    $user = User::create($request-&gt;validated());</span>
+
+<span class="x">    return redirect()-&gt;route(&#39;users.show&#39;, $user)</span>
+<span class="x">        -&gt;with(&#39;success&#39;, &#39;User created successfully!&#39;);</span>
+<span class="x">}</span>
+
+<span class="x">public function update(UpdateUserRequest $request, User $user)</span>
+<span class="x">{</span>
+<span class="x">    $user-&gt;update($request-&gt;validated());</span>
+
+<span class="x">    return redirect()-&gt;route(&#39;users.show&#39;, $user)</span>
+<span class="x">        -&gt;with(&#39;success&#39;, &#39;User updated successfully!&#39;);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="5-use-dependency-injection">5. Use Dependency Injection</h3>
+<p>Inject dependencies through the constructor:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">class UserController extends Controller</span>
+<span class="x">{</span>
+<span class="x">    protected $userService;</span>
+
+<span class="x">    public function __construct(UserService $userService)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;userService = $userService;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function store(StoreUserRequest $request)</span>
+<span class="x">    {</span>
+<span class="x">        $user = $this-&gt;userService-&gt;create($request-&gt;validated());</span>
+<span class="x">        return redirect()-&gt;route(&#39;users.show&#39;, $user);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Creating controllers using Artisan commands</li>
+<li>✅ Basic controller structure and methods</li>
+<li>✅ Route model binding</li>
+<li>✅ Request handling and validation</li>
+<li>✅ Different response types</li>
+<li>✅ Controller organization patterns</li>
+<li>✅ Middleware in controllers</li>
+<li>✅ Resource controllers</li>
+<li>✅ Best practices for writing controllers</li>
+</ul>
+<p>Controllers are essential for organizing your application logic and handling HTTP requests. In the next chapter, we'll explore Laravel's Blade templating engine for creating dynamic views.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/04-controllers.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="03-routing.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="05-blade.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

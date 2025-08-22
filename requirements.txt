@@ -1,0 +1,17 @@
+# Laravel Book Ebook Generator Dependencies
+
+# Core dependencies
+markdown==3.4.3
+pathlib2==2.3.7
+
+# PDF generation options (choose one or install all)
+weasyprint==59.0
+pdfkit==1.0.0
+
+# Alternative PDF generation
+# pandoc should be installed separately via system package manager
+
+# Development dependencies
+pytest==7.3.1
+black==23.3.0
+flake8==6.0.0

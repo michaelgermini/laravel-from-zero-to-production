@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 06-eloquent: Eloquent ORM - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 06-eloquent: Eloquent ORM</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-database"></i> Chapter 06-eloquent: Eloquent ORM
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-6-eloquent-orm">Chapter 6: Eloquent ORM</h1>
+<h2 id="what-is-eloquent">What is Eloquent?</h2>
+<p>Eloquent is Laravel's Object-Relational Mapping (ORM) system. It provides an elegant, simple ActiveRecord implementation for working with your database. Each database table has a corresponding "Model" which is used to interact with that table.</p>
+<h2 id="creating-models">Creating Models</h2>
+<h3 id="using-artisan-command">Using Artisan Command</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Basic model</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>User
+
+<span class="c1"># Model with migration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Post<span class="w"> </span>-m
+
+<span class="c1"># Model with migration and factory</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Comment<span class="w"> </span>-mf
+
+<span class="c1"># Model with migration, factory, and seeder</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Category<span class="w"> </span>-mfs
+
+<span class="c1"># Model with controller</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Product<span class="w"> </span>-c
+
+<span class="c1"># Model with resource controller</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:model<span class="w"> </span>Order<span class="w"> </span>-cr
+</code></pre></div>
+
+<h3 id="basic-model-structure">Basic Model Structure</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Factories\HasFactory</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Database\Eloquent\Model</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Model</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">HasFactory</span><span class="p">;</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * The attributes that are mass assignable.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$fillable</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;email&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * The attributes that should be hidden for serialization.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$hidden</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;remember_token&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * The attributes that should be cast.</span>
+<span class="sd">     *</span>
+<span class="sd">     * @var array</span>
+<span class="sd">     */</span>
+    <span class="k">protected</span> <span class="nv">$casts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;email_verified_at&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hashed&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="model-configuration">Model Configuration</h2>
+<h3 id="table-name">Table Name</h3>
+<p>By default, Eloquent assumes the table name is the plural form of the model name:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Table: users</span>
+<span class="x">}</span>
+
+<span class="x">class Post extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Table: posts</span>
+<span class="x">}</span>
+
+<span class="x">// Custom table name</span>
+<span class="x">class Post extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $table = &#39;blog_posts&#39;;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="primary-key">Primary Key</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Default: &#39;id&#39;</span>
+
+<span class="x">    // Custom primary key</span>
+<span class="x">    protected $primaryKey = &#39;user_id&#39;;</span>
+
+<span class="x">    // Disable auto-incrementing</span>
+<span class="x">    public $incrementing = false;</span>
+
+<span class="x">    // Custom key type</span>
+<span class="x">    protected $keyType = &#39;string&#39;;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="timestamps">Timestamps</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Default: true</span>
+
+<span class="x">    // Disable timestamps</span>
+<span class="x">    public $timestamps = false;</span>
+
+<span class="x">    // Custom timestamp column names</span>
+<span class="x">    const CREATED_AT = &#39;created_date&#39;;</span>
+<span class="x">    const UPDATED_AT = &#39;updated_date&#39;;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="mass-assignment">Mass Assignment</h2>
+<h3 id="fillable-attributes">Fillable Attributes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $fillable = [</span>
+<span class="x">        &#39;name&#39;,</span>
+<span class="x">        &#39;email&#39;,</span>
+<span class="x">        &#39;password&#39;,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="guarded-attributes">Guarded Attributes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Guard all attributes except specified ones</span>
+<span class="x">    protected $guarded = [&#39;id&#39;];</span>
+
+<span class="x">    // Or guard specific attributes</span>
+<span class="x">    protected $guarded = [&#39;id&#39;, &#39;admin&#39;];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="assignment-methods">Assignment Methods</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Using fillable/guarded</span>
+<span class="x">$user = new User();</span>
+<span class="x">$user-&gt;fill([</span>
+<span class="x">    &#39;name&#39; =&gt; &#39;John Doe&#39;,</span>
+<span class="x">    &#39;email&#39; =&gt; &#39;john@example.com&#39;,</span>
+<span class="x">]);</span>
+
+<span class="x">// Force assignment (bypasses fillable/guarded)</span>
+<span class="x">$user-&gt;forceFill([</span>
+<span class="x">    &#39;admin&#39; =&gt; true,</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<h2 id="attribute-casting">Attribute Casting</h2>
+<h3 id="basic-casting">Basic Casting</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $casts = [</span>
+<span class="x">        &#39;is_active&#39; =&gt; &#39;boolean&#39;,</span>
+<span class="x">        &#39;age&#39; =&gt; &#39;integer&#39;,</span>
+<span class="x">        &#39;height&#39; =&gt; &#39;float&#39;,</span>
+<span class="x">        &#39;settings&#39; =&gt; &#39;array&#39;,</span>
+<span class="x">        &#39;metadata&#39; =&gt; &#39;object&#39;,</span>
+<span class="x">        &#39;birth_date&#39; =&gt; &#39;date&#39;,</span>
+<span class="x">        &#39;last_login&#39; =&gt; &#39;datetime&#39;,</span>
+<span class="x">        &#39;email_verified_at&#39; =&gt; &#39;datetime&#39;,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="custom-casting">Custom Casting</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $casts = [</span>
+<span class="x">        &#39;settings&#39; =&gt; &#39;array&#39;,</span>
+<span class="x">        &#39;preferences&#39; =&gt; &#39;object&#39;,</span>
+<span class="x">        &#39;birth_date&#39; =&gt; &#39;date:Y-m-d&#39;,</span>
+<span class="x">        &#39;last_login&#39; =&gt; &#39;datetime:Y-m-d H:i:s&#39;,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="value-object-casting">Value Object Casting</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $casts = [</span>
+<span class="x">        &#39;address&#39; =&gt; Address::class,</span>
+<span class="x">        &#39;money&#39; =&gt; Money::class,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="accessors-and-mutators">Accessors and Mutators</h2>
+<h3 id="accessors">Accessors</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Get full name attribute</span>
+<span class="x">    public function getFullNameAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return &quot;{$this-&gt;first_name} {$this-&gt;last_name}&quot;;</span>
+<span class="x">    }</span>
+
+<span class="x">    // Get formatted email attribute</span>
+<span class="x">    public function getFormattedEmailAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return strtolower($this-&gt;email);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Get age attribute</span>
+<span class="x">    public function getAgeAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;birth_date-&gt;age;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="mutators">Mutators</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    // Set name attribute</span>
+<span class="x">    public function setNameAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;attributes[&#39;name&#39;] = strtolower($value);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Set email attribute</span>
+<span class="x">    public function setEmailAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;attributes[&#39;email&#39;] = strtolower($value);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Set password attribute</span>
+<span class="x">    public function setPasswordAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;attributes[&#39;password&#39;] = Hash::make($value);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="attribute-casting-with-accessorsmutators">Attribute Casting with Accessors/Mutators</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $casts = [</span>
+<span class="x">        &#39;settings&#39; =&gt; &#39;array&#39;,</span>
+<span class="x">    ];</span>
+
+<span class="x">    public function getSettingsAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $settings = json_decode($value, true);</span>
+<span class="x">        return array_merge([</span>
+<span class="x">            &#39;theme&#39; =&gt; &#39;light&#39;,</span>
+<span class="x">            &#39;notifications&#39; =&gt; true,</span>
+<span class="x">        ], $settings ?? []);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function setSettingsAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;attributes[&#39;settings&#39;] = json_encode($value);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="eloquent-relationships">Eloquent Relationships</h2>
+<h3 id="one-to-one">One-to-One</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User has one Profile</span>
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function profile()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;hasOne(Profile::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Profile belongs to User</span>
+<span class="x">class Profile extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function user()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;belongsTo(User::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="one-to-many">One-to-Many</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User has many Posts</span>
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function posts()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;hasMany(Post::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Post belongs to User</span>
+<span class="x">class Post extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function user()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;belongsTo(User::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="many-to-many">Many-to-Many</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User has many Roles</span>
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function roles()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;belongsToMany(Role::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Role has many Users</span>
+<span class="x">class Role extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function users()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;belongsToMany(User::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="has-many-through">Has Many Through</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Country has many Posts through Users</span>
+<span class="x">class Country extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function posts()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;hasManyThrough(Post::class, User::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="polymorphic-relationships">Polymorphic Relationships</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Post has many Comments</span>
+<span class="x">class Post extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function comments()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;morphMany(Comment::class, &#39;commentable&#39;);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Video has many Comments</span>
+<span class="x">class Video extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function comments()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;morphMany(Comment::class, &#39;commentable&#39;);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Comment belongs to Post or Video</span>
+<span class="x">class Comment extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function commentable()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;morphTo();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="querying-with-eloquent">Querying with Eloquent</h2>
+<h3 id="basic-queries">Basic Queries</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Get all users</span>
+<span class="x">$users = User::all();</span>
+
+<span class="x">// Find by ID</span>
+<span class="x">$user = User::find(1);</span>
+<span class="x">$user = User::findOrFail(1);</span>
+
+<span class="x">// Find by column</span>
+<span class="x">$user = User::where(&#39;email&#39;, &#39;john@example.com&#39;)-&gt;first();</span>
+<span class="x">$user = User::where(&#39;email&#39;, &#39;john@example.com&#39;)-&gt;firstOrFail();</span>
+
+<span class="x">// Get first user</span>
+<span class="x">$user = User::first();</span>
+
+<span class="x">// Get last user</span>
+<span class="x">$user = User::latest()-&gt;first();</span>
+</code></pre></div>
+
+<h3 id="where-clauses">Where Clauses</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Basic where</span>
+<span class="x">$users = User::where(&#39;active&#39;, true)-&gt;get();</span>
+
+<span class="x">// Multiple conditions</span>
+<span class="x">$users = User::where(&#39;active&#39;, true)</span>
+<span class="x">    -&gt;where(&#39;age&#39;, &#39;&gt;&#39;, 18)</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">// OR conditions</span>
+<span class="x">$users = User::where(&#39;active&#39;, true)</span>
+<span class="x">    -&gt;orWhere(&#39;admin&#39;, true)</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">// Where in</span>
+<span class="x">$users = User::whereIn(&#39;id&#39;, [1, 2, 3])-&gt;get();</span>
+
+<span class="x">// Where between</span>
+<span class="x">$users = User::whereBetween(&#39;created_at&#39;, [</span>
+<span class="x">    &#39;2023-01-01&#39;,</span>
+<span class="x">    &#39;2023-12-31&#39;</span>
+<span class="x">])-&gt;get();</span>
+
+<span class="x">// Where null</span>
+<span class="x">$users = User::whereNull(&#39;email_verified_at&#39;)-&gt;get();</span>
+
+<span class="x">// Where not null</span>
+<span class="x">$users = User::whereNotNull(&#39;email_verified_at&#39;)-&gt;get();</span>
+</code></pre></div>
+
+<h3 id="ordering-and-limiting">Ordering and Limiting</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Order by</span>
+<span class="x">$users = User::orderBy(&#39;name&#39;, &#39;asc&#39;)-&gt;get();</span>
+<span class="x">$users = User::orderBy(&#39;created_at&#39;, &#39;desc&#39;)-&gt;get();</span>
+
+<span class="x">// Latest/oldest</span>
+<span class="x">$users = User::latest()-&gt;get();</span>
+<span class="x">$users = User::oldest()-&gt;get();</span>
+
+<span class="x">// Limit</span>
+<span class="x">$users = User::limit(10)-&gt;get();</span>
+
+<span class="x">// Offset</span>
+<span class="x">$users = User::offset(10)-&gt;limit(10)-&gt;get();</span>
+
+<span class="x">// Skip and take</span>
+<span class="x">$users = User::skip(10)-&gt;take(10)-&gt;get();</span>
+</code></pre></div>
+
+<h3 id="aggregates">Aggregates</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Count</span>
+<span class="x">$count = User::count();</span>
+<span class="x">$count = User::where(&#39;active&#39;, true)-&gt;count();</span>
+
+<span class="x">// Sum</span>
+<span class="x">$total = Order::sum(&#39;total&#39;);</span>
+
+<span class="x">// Average</span>
+<span class="x">$average = Order::avg(&#39;total&#39;);</span>
+
+<span class="x">// Min/Max</span>
+<span class="x">$min = Order::min(&#39;total&#39;);</span>
+<span class="x">$max = Order::max(&#39;total&#39;);</span>
+</code></pre></div>
+
+<h3 id="eager-loading">Eager Loading</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Load relationships</span>
+<span class="x">$users = User::with(&#39;posts&#39;)-&gt;get();</span>
+
+<span class="x">// Load multiple relationships</span>
+<span class="x">$users = User::with([&#39;posts&#39;, &#39;profile&#39;])-&gt;get();</span>
+
+<span class="x">// Load nested relationships</span>
+<span class="x">$users = User::with(&#39;posts.comments&#39;)-&gt;get();</span>
+
+<span class="x">// Conditional eager loading</span>
+<span class="x">$users = User::with([&#39;posts&#39; =&gt; function ($query) {</span>
+<span class="x">    $query-&gt;where(&#39;published&#39;, true);</span>
+<span class="x">}])-&gt;get();</span>
+
+<span class="x">// Lazy eager loading</span>
+<span class="x">$users = User::all();</span>
+<span class="x">$users-&gt;load(&#39;posts&#39;);</span>
+</code></pre></div>
+
+<h2 id="crud-operations">CRUD Operations</h2>
+<h3 id="creating-records">Creating Records</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Create single record</span>
+<span class="x">$user = User::create([</span>
+<span class="x">    &#39;name&#39; =&gt; &#39;John Doe&#39;,</span>
+<span class="x">    &#39;email&#39; =&gt; &#39;john@example.com&#39;,</span>
+<span class="x">    &#39;password&#39; =&gt; Hash::make(&#39;password&#39;),</span>
+<span class="x">]);</span>
+
+<span class="x">// Create multiple records</span>
+<span class="x">$users = User::createMany([</span>
+<span class="x">    [&#39;name&#39; =&gt; &#39;John&#39;, &#39;email&#39; =&gt; &#39;john@example.com&#39;],</span>
+<span class="x">    [&#39;name&#39; =&gt; &#39;Jane&#39;, &#39;email&#39; =&gt; &#39;jane@example.com&#39;],</span>
+<span class="x">]);</span>
+
+<span class="x">// Create or update</span>
+<span class="x">$user = User::updateOrCreate(</span>
+<span class="x">    [&#39;email&#39; =&gt; &#39;john@example.com&#39;],</span>
+<span class="x">    [&#39;name&#39; =&gt; &#39;John Doe&#39;, &#39;active&#39; =&gt; true]</span>
+<span class="x">);</span>
+
+<span class="x">// First or create</span>
+<span class="x">$user = User::firstOrCreate(</span>
+<span class="x">    [&#39;email&#39; =&gt; &#39;john@example.com&#39;],</span>
+<span class="x">    [&#39;name&#39; =&gt; &#39;John Doe&#39;]</span>
+<span class="x">);</span>
+</code></pre></div>
+
+<h3 id="updating-records">Updating Records</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Update single record</span>
+<span class="x">$user = User::find(1);</span>
+<span class="x">$user-&gt;update([&#39;name&#39; =&gt; &#39;Jane Doe&#39;]);</span>
+
+<span class="x">// Update multiple records</span>
+<span class="x">User::where(&#39;active&#39;, false)-&gt;update([&#39;status&#39; =&gt; &#39;inactive&#39;]);</span>
+
+<span class="x">// Update or create</span>
+<span class="x">$user = User::updateOrCreate(</span>
+<span class="x">    [&#39;email&#39; =&gt; &#39;john@example.com&#39;],</span>
+<span class="x">    [&#39;name&#39; =&gt; &#39;John Doe&#39;]</span>
+<span class="x">);</span>
+</code></pre></div>
+
+<h3 id="deleting-records">Deleting Records</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Delete single record</span>
+<span class="x">$user = User::find(1);</span>
+<span class="x">$user-&gt;delete();</span>
+
+<span class="x">// Delete by ID</span>
+<span class="x">User::destroy(1);</span>
+<span class="x">User::destroy([1, 2, 3]);</span>
+
+<span class="x">// Delete with conditions</span>
+<span class="x">User::where(&#39;active&#39;, false)-&gt;delete();</span>
+
+<span class="x">// Soft delete (if model uses SoftDeletes trait)</span>
+<span class="x">$user-&gt;delete(); // Sets deleted_at timestamp</span>
+</code></pre></div>
+
+<h2 id="soft-deletes">Soft Deletes</h2>
+<h3 id="using-soft-deletes">Using Soft Deletes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Database\Eloquent\SoftDeletes;</span>
+
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    use SoftDeletes;</span>
+
+<span class="x">    protected $dates = [&#39;deleted_at&#39;];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="soft-delete-operations">Soft Delete Operations</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Soft delete</span>
+<span class="x">$user-&gt;delete();</span>
+
+<span class="x">// Force delete</span>
+<span class="x">$user-&gt;forceDelete();</span>
+
+<span class="x">// Restore soft deleted record</span>
+<span class="x">$user-&gt;restore();</span>
+
+<span class="x">// Get only soft deleted records</span>
+<span class="x">$deletedUsers = User::onlyTrashed()-&gt;get();</span>
+
+<span class="x">// Get all records including soft deleted</span>
+<span class="x">$allUsers = User::withTrashed()-&gt;get();</span>
+</code></pre></div>
+
+<h2 id="model-events">Model Events</h2>
+<h3 id="available-events">Available Events</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected static function booted()</span>
+<span class="x">    {</span>
+<span class="x">        // Creating, created</span>
+<span class="x">        static::creating(function ($user) {</span>
+<span class="x">            $user-&gt;slug = Str::slug($user-&gt;name);</span>
+<span class="x">        });</span>
+
+<span class="x">        // Updating, updated</span>
+<span class="x">        static::updating(function ($user) {</span>
+<span class="x">            $user-&gt;updated_count++;</span>
+<span class="x">        });</span>
+
+<span class="x">        // Deleting, deleted</span>
+<span class="x">        static::deleting(function ($user) {</span>
+<span class="x">            // Cleanup related data</span>
+<span class="x">        });</span>
+
+<span class="x">        // Saving, saved</span>
+<span class="x">        static::saving(function ($user) {</span>
+<span class="x">            // Before save</span>
+<span class="x">        });</span>
+
+<span class="x">        // Restoring, restored</span>
+<span class="x">        static::restoring(function ($user) {</span>
+<span class="x">            // Before restore</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="observers">Observers</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:observer<span class="w"> </span>UserObserver<span class="w"> </span>--model<span class="o">=</span>User
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="x">class UserObserver</span>
+<span class="x">{</span>
+<span class="x">    public function created(User $user)</span>
+<span class="x">    {</span>
+<span class="x">        // Send welcome email</span>
+<span class="x">    }</span>
+
+<span class="x">    public function updated(User $user)</span>
+<span class="x">    {</span>
+<span class="x">        // Log changes</span>
+<span class="x">    }</span>
+
+<span class="x">    public function deleted(User $user)</span>
+<span class="x">    {</span>
+<span class="x">        // Cleanup</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p>Register in <code>AppServiceProvider</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    User::observe(UserObserver::class);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="scopes">Scopes</h2>
+<h3 id="local-scopes">Local Scopes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function scopeActive($query)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;active&#39;, true);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function scopeOlderThan($query, $age)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;age&#39;, &#39;&gt;&#39;, $age);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function scopeByRole($query, $role)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;whereHas(&#39;roles&#39;, function ($q) use ($role) {</span>
+<span class="x">            $q-&gt;where(&#39;name&#39;, $role);</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="global-scopes">Global Scopes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class ActiveScope implements Scope</span>
+<span class="x">{</span>
+<span class="x">    public function apply(Builder $builder, Model $model)</span>
+<span class="x">    {</span>
+<span class="x">        $builder-&gt;where(&#39;active&#39;, true);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected static function booted()</span>
+<span class="x">    {</span>
+<span class="x">        static::addGlobalScope(new ActiveScope);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="model-factories">Model Factories</h2>
+<h3 id="creating-factories">Creating Factories</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:factory<span class="w"> </span>UserFactory
+</code></pre></div>
+
+<h3 id="defining-factories">Defining Factories</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class UserFactory extends Factory</span>
+<span class="x">{</span>
+<span class="x">    public function definition()</span>
+<span class="x">    {</span>
+<span class="x">        return [</span>
+<span class="x">            &#39;name&#39; =&gt; $this-&gt;faker-&gt;name(),</span>
+<span class="x">            &#39;email&#39; =&gt; $this-&gt;faker-&gt;unique()-&gt;safeEmail(),</span>
+<span class="x">            &#39;email_verified_at&#39; =&gt; now(),</span>
+<span class="x">            &#39;password&#39; =&gt; Hash::make(&#39;password&#39;),</span>
+<span class="x">            &#39;remember_token&#39; =&gt; Str::random(10),</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    public function unverified()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;state(function (array $attributes) {</span>
+<span class="x">            return [</span>
+<span class="x">                &#39;email_verified_at&#39; =&gt; null,</span>
+<span class="x">            ];</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+
+<span class="x">    public function admin()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;state(function (array $attributes) {</span>
+<span class="x">            return [</span>
+<span class="x">                &#39;is_admin&#39; =&gt; true,</span>
+<span class="x">            ];</span>
+<span class="x">        });</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="using-factories">Using Factories</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Create single user</span>
+<span class="x">$user = User::factory()-&gt;create();</span>
+
+<span class="x">// Create user with specific attributes</span>
+<span class="x">$user = User::factory()-&gt;create([</span>
+<span class="x">    &#39;name&#39; =&gt; &#39;John Doe&#39;,</span>
+<span class="x">    &#39;email&#39; =&gt; &#39;john@example.com&#39;,</span>
+<span class="x">]);</span>
+
+<span class="x">// Create multiple users</span>
+<span class="x">$users = User::factory()-&gt;count(10)-&gt;create();</span>
+
+<span class="x">// Create user with relationships</span>
+<span class="x">$user = User::factory()</span>
+<span class="x">    -&gt;has(Post::factory()-&gt;count(3))</span>
+<span class="x">    -&gt;create();</span>
+
+<span class="x">// Create user with state</span>
+<span class="x">$user = User::factory()-&gt;unverified()-&gt;create();</span>
+<span class="x">$admin = User::factory()-&gt;admin()-&gt;create();</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-use-fillableguarded">1. Use Fillable/Guarded</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    protected $fillable = [</span>
+<span class="x">        &#39;name&#39;,</span>
+<span class="x">        &#39;email&#39;,</span>
+<span class="x">        &#39;password&#39;,</span>
+<span class="x">    ];</span>
+
+<span class="x">    // Or use guarded</span>
+<span class="x">    protected $guarded = [&#39;id&#39;, &#39;admin&#39;];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-use-accessors-and-mutators">2. Use Accessors and Mutators</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function getFullNameAttribute()</span>
+<span class="x">    {</span>
+<span class="x">        return &quot;{$this-&gt;first_name} {$this-&gt;last_name}&quot;;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function setEmailAttribute($value)</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;attributes[&#39;email&#39;] = strtolower($value);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="3-use-relationships">3. Use Relationships</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">$user-&gt;posts;</span>
+
+<span class="x">// Bad</span>
+<span class="x">Post::where(&#39;user_id&#39;, $user-&gt;id)-&gt;get();</span>
+</code></pre></div>
+
+<h3 id="4-use-eager-loading">4. Use Eager Loading</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Good</span>
+<span class="x">$users = User::with(&#39;posts&#39;)-&gt;get();</span>
+
+<span class="x">// Bad</span>
+<span class="x">$users = User::all();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    $user-&gt;posts; // N+1 problem</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="5-use-scopes-for-common-queries">5. Use Scopes for Common Queries</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">class User extends Model</span>
+<span class="x">{</span>
+<span class="x">    public function scopeActive($query)</span>
+<span class="x">    {</span>
+<span class="x">        return $query-&gt;where(&#39;active&#39;, true);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage</span>
+<span class="x">$activeUsers = User::active()-&gt;get();</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Creating and configuring Eloquent models</li>
+<li>✅ Mass assignment and attribute casting</li>
+<li>✅ Accessors and mutators</li>
+<li>✅ Eloquent relationships (one-to-one, one-to-many, many-to-many, etc.)</li>
+<li>✅ Querying with Eloquent</li>
+<li>✅ CRUD operations</li>
+<li>✅ Soft deletes</li>
+<li>✅ Model events and observers</li>
+<li>✅ Local and global scopes</li>
+<li>✅ Model factories</li>
+<li>✅ Best practices for working with Eloquent</li>
+</ul>
+<p>Eloquent provides a powerful and intuitive way to work with your database. In the next chapter, we'll explore database migrations for managing your database schema.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/06-eloquent.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="05-blade.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="07-migrations.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

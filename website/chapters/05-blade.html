@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 05-blade: Blade Templates - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 05-blade: Blade Templates</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-file-code"></i> Chapter 05-blade: Blade Templates
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-5-blade-templates">Chapter 5: Blade Templates</h1>
+<h2 id="what-is-blade">What is Blade?</h2>
+<p>Blade is Laravel's powerful templating engine. It provides a clean, simple syntax for creating dynamic views with PHP. Blade templates are compiled into plain PHP code and cached for optimal performance.</p>
+<h2 id="basic-blade-syntax">Basic Blade Syntax</h2>
+<h3 id="echoing-data">Echoing Data</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">{{ $variable }}</span>
+
+<span class="x">{{ $user-&gt;name }}</span>
+
+<span class="x">{{ $array[&#39;key&#39;] }}</span>
+
+<span class="x">{{ $object-&gt;method() }}</span>
+</code></pre></div>
+
+<h3 id="unescaped-data">Unescaped Data</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">{!! $html !!}</span>
+</code></pre></div>
+
+<p><strong>Warning</strong>: Only use <code>{!! !!}</code> for trusted content to prevent XSS attacks.</p>
+<h3 id="comments">Comments</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">{{-- This is a Blade comment --}}</span>
+<span class="x">{{-- </span>
+<span class="x">    Multi-line</span>
+<span class="x">    comments</span>
+<span class="x">--}}</span>
+</code></pre></div>
+
+<h2 id="blade-directives">Blade Directives</h2>
+<h3 id="conditional-statements">Conditional Statements</h3>
+<h4 id="if-elseif-else">@if, @elseif, @else</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@if($user-&gt;isAdmin())</span>
+<span class="x">    &lt;h1&gt;Welcome, Administrator!&lt;/h1&gt;</span>
+<span class="x">@elseif($user-&gt;isModerator())</span>
+<span class="x">    &lt;h1&gt;Welcome, Moderator!&lt;/h1&gt;</span>
+<span class="x">@else</span>
+<span class="x">    &lt;h1&gt;Welcome, User!&lt;/h1&gt;</span>
+<span class="x">@endif</span>
+</code></pre></div>
+
+<h4 id="unless">@unless</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@unless($user-&gt;isVerified())</span>
+<span class="x">    &lt;p&gt;Please verify your email address.&lt;/p&gt;</span>
+<span class="x">@endunless</span>
+</code></pre></div>
+
+<h4 id="isset-and-empty">@isset and @empty</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@isset($user-&gt;profile)</span>
+<span class="x">    &lt;p&gt;Profile: {{ $user-&gt;profile-&gt;bio }}&lt;/p&gt;</span>
+<span class="x">@endisset</span>
+
+<span class="x">@empty($posts)</span>
+<span class="x">    &lt;p&gt;No posts found.&lt;/p&gt;</span>
+<span class="x">@endempty</span>
+</code></pre></div>
+
+<h3 id="loops">Loops</h3>
+<h4 id="foreach">@foreach</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@foreach($users as $user)</span>
+<span class="x">    &lt;div class=&quot;user&quot;&gt;</span>
+<span class="x">        &lt;h3&gt;{{ $user-&gt;name }}&lt;/h3&gt;</span>
+<span class="x">        &lt;p&gt;{{ $user-&gt;email }}&lt;/p&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@endforeach</span>
+</code></pre></div>
+
+<h4 id="for">@for</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@for($i = 0; $i &lt; 10; $i++)</span>
+<span class="x">    &lt;p&gt;Item {{ $i }}&lt;/p&gt;</span>
+<span class="x">@endfor</span>
+</code></pre></div>
+
+<h4 id="while">@while</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@while($condition)</span>
+<span class="x">    &lt;p&gt;Looping...&lt;/p&gt;</span>
+<span class="x">@endwhile</span>
+</code></pre></div>
+
+<h4 id="forelse">@forelse</h4>
+<div class="codehilite"><pre><span></span><code><span class="x">@forelse($posts as $post)</span>
+<span class="x">    &lt;div class=&quot;post&quot;&gt;</span>
+<span class="x">        &lt;h2&gt;{{ $post-&gt;title }}&lt;/h2&gt;</span>
+<span class="x">        &lt;p&gt;{{ $post-&gt;excerpt }}&lt;/p&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@empty</span>
+<span class="x">    &lt;p&gt;No posts available.&lt;/p&gt;</span>
+<span class="x">@endforelse</span>
+</code></pre></div>
+
+<h3 id="loop-variables">Loop Variables</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">@foreach($users as $user)</span>
+<span class="x">    @if($loop-&gt;first)</span>
+<span class="x">        &lt;p&gt;First user: {{ $user-&gt;name }}&lt;/p&gt;</span>
+<span class="x">    @endif</span>
+
+<span class="x">    @if($loop-&gt;last)</span>
+<span class="x">        &lt;p&gt;Last user: {{ $user-&gt;name }}&lt;/p&gt;</span>
+<span class="x">    @endif</span>
+
+<span class="x">    &lt;p&gt;User {{ $loop-&gt;iteration }} of {{ $loop-&gt;count }}: {{ $user-&gt;name }}&lt;/p&gt;</span>
+
+<span class="x">    @if($loop-&gt;even)</span>
+<span class="x">        &lt;p&gt;Even row&lt;/p&gt;</span>
+<span class="x">    @endif</span>
+
+<span class="x">    @if($loop-&gt;odd)</span>
+<span class="x">        &lt;p&gt;Odd row&lt;/p&gt;</span>
+<span class="x">    @endif</span>
+<span class="x">@endforeach</span>
+</code></pre></div>
+
+<h2 id="layouts-and-sections">Layouts and Sections</h2>
+<h3 id="creating-a-layout">Creating a Layout</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/layouts/app.blade.php --&gt;</span>
+<span class="x">&lt;!DOCTYPE html&gt;</span>
+<span class="x">&lt;html lang=&quot;en&quot;&gt;</span>
+<span class="x">&lt;head&gt;</span>
+<span class="x">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span>
+<span class="x">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span>
+<span class="x">    &lt;title&gt;@yield(&#39;title&#39;, &#39;My Laravel App&#39;)&lt;/title&gt;</span>
+<span class="x">    &lt;link href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot;&gt;</span>
+<span class="x">    @stack(&#39;styles&#39;)</span>
+<span class="x">&lt;/head&gt;</span>
+<span class="x">&lt;body&gt;</span>
+<span class="x">    &lt;nav class=&quot;navbar navbar-expand-lg navbar-light bg-light&quot;&gt;</span>
+<span class="x">        &lt;div class=&quot;container&quot;&gt;</span>
+<span class="x">            &lt;a class=&quot;navbar-brand&quot; href=&quot;{{ route(&#39;home&#39;) }}&quot;&gt;My App&lt;/a&gt;</span>
+<span class="x">            &lt;div class=&quot;navbar-nav&quot;&gt;</span>
+<span class="x">                &lt;a class=&quot;nav-link&quot; href=&quot;{{ route(&#39;users.index&#39;) }}&quot;&gt;Users&lt;/a&gt;</span>
+<span class="x">                &lt;a class=&quot;nav-link&quot; href=&quot;{{ route(&#39;posts.index&#39;) }}&quot;&gt;Posts&lt;/a&gt;</span>
+<span class="x">            &lt;/div&gt;</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    &lt;/nav&gt;</span>
+
+<span class="x">    &lt;main class=&quot;container mt-4&quot;&gt;</span>
+<span class="x">        @if(session(&#39;success&#39;))</span>
+<span class="x">            &lt;div class=&quot;alert alert-success&quot;&gt;</span>
+<span class="x">                {{ session(&#39;success&#39;) }}</span>
+<span class="x">            &lt;/div&gt;</span>
+<span class="x">        @endif</span>
+
+<span class="x">        @if(session(&#39;error&#39;))</span>
+<span class="x">            &lt;div class=&quot;alert alert-danger&quot;&gt;</span>
+<span class="x">                {{ session(&#39;error&#39;) }}</span>
+<span class="x">            &lt;/div&gt;</span>
+<span class="x">        @endif</span>
+
+<span class="x">        @yield(&#39;content&#39;)</span>
+<span class="x">    &lt;/main&gt;</span>
+
+<span class="x">    &lt;footer class=&quot;bg-light mt-5 py-3&quot;&gt;</span>
+<span class="x">        &lt;div class=&quot;container text-center&quot;&gt;</span>
+<span class="x">            &lt;p&gt;&amp;copy; {{ date(&#39;Y&#39;) }} My Laravel App. All rights reserved.&lt;/p&gt;</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    &lt;/footer&gt;</span>
+
+<span class="x">    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;</span>
+<span class="x">    @stack(&#39;scripts&#39;)</span>
+<span class="x">&lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
+
+<h3 id="extending-a-layout">Extending a Layout</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/users/index.blade.php --&gt;</span>
+<span class="x">@extends(&#39;layouts.app&#39;)</span>
+
+<span class="x">@section(&#39;title&#39;, &#39;Users - My Laravel App&#39;)</span>
+
+<span class="x">@section(&#39;content&#39;)</span>
+<span class="x">    &lt;div class=&quot;row&quot;&gt;</span>
+<span class="x">        &lt;div class=&quot;col-md-12&quot;&gt;</span>
+<span class="x">            &lt;h1&gt;Users&lt;/h1&gt;</span>
+<span class="x">            &lt;a href=&quot;{{ route(&#39;users.create&#39;) }}&quot; class=&quot;btn btn-primary mb-3&quot;&gt;Create User&lt;/a&gt;</span>
+
+<span class="x">            &lt;div class=&quot;table-responsive&quot;&gt;</span>
+<span class="x">                &lt;table class=&quot;table table-striped&quot;&gt;</span>
+<span class="x">                    &lt;thead&gt;</span>
+<span class="x">                        &lt;tr&gt;</span>
+<span class="x">                            &lt;th&gt;Name&lt;/th&gt;</span>
+<span class="x">                            &lt;th&gt;Email&lt;/th&gt;</span>
+<span class="x">                            &lt;th&gt;Created&lt;/th&gt;</span>
+<span class="x">                            &lt;th&gt;Actions&lt;/th&gt;</span>
+<span class="x">                        &lt;/tr&gt;</span>
+<span class="x">                    &lt;/thead&gt;</span>
+<span class="x">                    &lt;tbody&gt;</span>
+<span class="x">                        @foreach($users as $user)</span>
+<span class="x">                            &lt;tr&gt;</span>
+<span class="x">                                &lt;td&gt;{{ $user-&gt;name }}&lt;/td&gt;</span>
+<span class="x">                                &lt;td&gt;{{ $user-&gt;email }}&lt;/td&gt;</span>
+<span class="x">                                &lt;td&gt;{{ $user-&gt;created_at-&gt;format(&#39;M d, Y&#39;) }}&lt;/td&gt;</span>
+<span class="x">                                &lt;td&gt;</span>
+<span class="x">                                    &lt;a href=&quot;{{ route(&#39;users.show&#39;, $user) }}&quot; class=&quot;btn btn-sm btn-info&quot;&gt;View&lt;/a&gt;</span>
+<span class="x">                                    &lt;a href=&quot;{{ route(&#39;users.edit&#39;, $user) }}&quot; class=&quot;btn btn-sm btn-warning&quot;&gt;Edit&lt;/a&gt;</span>
+<span class="x">                                    &lt;form action=&quot;{{ route(&#39;users.destroy&#39;, $user) }}&quot; method=&quot;POST&quot; class=&quot;d-inline&quot;&gt;</span>
+<span class="x">                                        @csrf</span>
+<span class="x">                                        @method(&#39;DELETE&#39;)</span>
+<span class="x">                                        &lt;button type=&quot;submit&quot; class=&quot;btn btn-sm btn-danger&quot; onclick=&quot;return confirm(&#39;Are you sure?&#39;)&quot;&gt;Delete&lt;/button&gt;</span>
+<span class="x">                                    &lt;/form&gt;</span>
+<span class="x">                                &lt;/td&gt;</span>
+<span class="x">                            &lt;/tr&gt;</span>
+<span class="x">                        @endforeach</span>
+<span class="x">                    &lt;/tbody&gt;</span>
+<span class="x">                &lt;/table&gt;</span>
+<span class="x">            &lt;/div&gt;</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@endsection</span>
+</code></pre></div>
+
+<h3 id="stacks">Stacks</h3>
+<p>Stacks allow you to push content to named stacks that can be rendered elsewhere in the layout:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- In your view --&gt;</span>
+<span class="x">@push(&#39;styles&#39;)</span>
+<span class="x">    &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/custom.css&quot;&gt;</span>
+<span class="x">@endpush</span>
+
+<span class="x">@push(&#39;scripts&#39;)</span>
+<span class="x">    &lt;script src=&quot;/js/custom.js&quot;&gt;&lt;/script&gt;</span>
+<span class="x">@endpush</span>
+
+<span class="x">&lt;!-- Or prepend content --&gt;</span>
+<span class="x">@prepend(&#39;scripts&#39;)</span>
+<span class="x">    &lt;script src=&quot;/js/analytics.js&quot;&gt;&lt;/script&gt;</span>
+<span class="x">@endprepend</span>
+</code></pre></div>
+
+<h2 id="components">Components</h2>
+<h3 id="creating-components">Creating Components</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>make:component<span class="w"> </span>Alert
+php<span class="w"> </span>artisan<span class="w"> </span>make:component<span class="w"> </span>UserCard<span class="w"> </span>--view
+</code></pre></div>
+
+<h3 id="class-based-components">Class-Based Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- app/View/Components/Alert.php --&gt;</span>
+<span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\View\Components</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\View\Component</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Alert</span> <span class="k">extends</span> <span class="nx">Component</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nv">$type</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nv">$message</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$type</span> <span class="o">=</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="nv">$message</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">=</span> <span class="nv">$type</span><span class="p">;</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">message</span> <span class="o">=</span> <span class="nv">$message</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">render</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">view</span><span class="p">(</span><span class="s1">&#39;components.alert&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">isDismissible</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">in_array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;warning&#39;</span><span class="p">,</span> <span class="s1">&#39;danger&#39;</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/components/alert.blade.php --&gt;</span>
+<span class="x">&lt;div class=&quot;alert alert-{{ $type }} {{ $isDismissible() ? &#39;alert-dismissible fade show&#39; : &#39;&#39; }}&quot; role=&quot;alert&quot;&gt;</span>
+<span class="x">    {{ $message }}</span>
+<span class="x">    {{ $slot }}</span>
+
+<span class="x">    @if($isDismissible())</span>
+<span class="x">        &lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;</span>
+<span class="x">    @endif</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+
+<h3 id="anonymous-components">Anonymous Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/components/alert.blade.php --&gt;</span>
+<span class="x">@props([&#39;type&#39; =&gt; &#39;info&#39;, &#39;dismissible&#39; =&gt; false])</span>
+
+<span class="x">&lt;div class=&quot;alert alert-{{ $type }} {{ $dismissible ? &#39;alert-dismissible fade show&#39; : &#39;&#39; }}&quot; role=&quot;alert&quot;&gt;</span>
+<span class="x">    {{ $slot }}</span>
+
+<span class="x">    @if($dismissible)</span>
+<span class="x">        &lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;</span>
+<span class="x">    @endif</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+
+<h3 id="using-components">Using Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- Class-based component --&gt;</span>
+<span class="x">&lt;x-alert type=&quot;success&quot; message=&quot;User created successfully!&quot; /&gt;</span>
+
+<span class="x">&lt;!-- Anonymous component --&gt;</span>
+<span class="x">&lt;x-alert type=&quot;danger&quot; dismissible&gt;</span>
+<span class="x">    &lt;strong&gt;Error!&lt;/strong&gt; Something went wrong.</span>
+<span class="x">&lt;/x-alert&gt;</span>
+
+<span class="x">&lt;!-- With slots --&gt;</span>
+<span class="x">&lt;x-card&gt;</span>
+<span class="x">    &lt;x-slot name=&quot;header&quot;&gt;</span>
+<span class="x">        &lt;h5 class=&quot;card-title&quot;&gt;User Information&lt;/h5&gt;</span>
+<span class="x">    &lt;/x-slot&gt;</span>
+
+<span class="x">    &lt;p class=&quot;card-text&quot;&gt;This is the card content.&lt;/p&gt;</span>
+
+<span class="x">    &lt;x-slot name=&quot;footer&quot;&gt;</span>
+<span class="x">        &lt;button class=&quot;btn btn-primary&quot;&gt;Save&lt;/button&gt;</span>
+<span class="x">    &lt;/x-slot&gt;</span>
+<span class="x">&lt;/x-card&gt;</span>
+</code></pre></div>
+
+<h2 id="forms">Forms</h2>
+<h3 id="csrf-protection">CSRF Protection</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;form method=&quot;POST&quot; action=&quot;{{ route(&#39;users.store&#39;) }}&quot;&gt;</span>
+<span class="x">    @csrf</span>
+<span class="x">    &lt;!-- form fields --&gt;</span>
+<span class="x">&lt;/form&gt;</span>
+</code></pre></div>
+
+<h3 id="method-spoofing">Method Spoofing</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;form method=&quot;POST&quot; action=&quot;{{ route(&#39;users.update&#39;, $user) }}&quot;&gt;</span>
+<span class="x">    @csrf</span>
+<span class="x">    @method(&#39;PUT&#39;)</span>
+<span class="x">    &lt;!-- form fields --&gt;</span>
+<span class="x">&lt;/form&gt;</span>
+</code></pre></div>
+
+<h3 id="form-components">Form Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/components/form/input.blade.php --&gt;</span>
+<span class="x">@props([&#39;name&#39;, &#39;label&#39;, &#39;type&#39; =&gt; &#39;text&#39;, &#39;value&#39; =&gt; &#39;&#39;, &#39;required&#39; =&gt; false])</span>
+
+<span class="x">&lt;div class=&quot;mb-3&quot;&gt;</span>
+<span class="x">    &lt;label for=&quot;{{ $name }}&quot; class=&quot;form-label&quot;&gt;{{ $label }}&lt;/label&gt;</span>
+<span class="x">    &lt;input </span>
+<span class="x">        type=&quot;{{ $type }}&quot; </span>
+<span class="x">        class=&quot;form-control @error($name) is-invalid @enderror&quot; </span>
+<span class="x">        id=&quot;{{ $name }}&quot; </span>
+<span class="x">        name=&quot;{{ $name }}&quot; </span>
+<span class="x">        value=&quot;{{ old($name, $value) }}&quot;</span>
+<span class="x">        {{ $required ? &#39;required&#39; : &#39;&#39; }}</span>
+<span class="x">    &gt;</span>
+<span class="x">    @error($name)</span>
+<span class="x">        &lt;div class=&quot;invalid-feedback&quot;&gt;</span>
+<span class="x">            {{ $message }}</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    @enderror</span>
+<span class="x">&lt;/div&gt;</span>
+</code></pre></div>
+
+<h3 id="using-form-components">Using Form Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- resources/views/users/create.blade.php --&gt;</span>
+<span class="x">@extends(&#39;layouts.app&#39;)</span>
+
+<span class="x">@section(&#39;content&#39;)</span>
+<span class="x">    &lt;div class=&quot;row&quot;&gt;</span>
+<span class="x">        &lt;div class=&quot;col-md-8 offset-md-2&quot;&gt;</span>
+<span class="x">            &lt;h1&gt;Create User&lt;/h1&gt;</span>
+
+<span class="x">            &lt;form method=&quot;POST&quot; action=&quot;{{ route(&#39;users.store&#39;) }}&quot;&gt;</span>
+<span class="x">                @csrf</span>
+
+<span class="x">                &lt;x-form.input name=&quot;name&quot; label=&quot;Name&quot; required /&gt;</span>
+<span class="x">                &lt;x-form.input name=&quot;email&quot; label=&quot;Email&quot; type=&quot;email&quot; required /&gt;</span>
+<span class="x">                &lt;x-form.input name=&quot;password&quot; label=&quot;Password&quot; type=&quot;password&quot; required /&gt;</span>
+<span class="x">                &lt;x-form.input name=&quot;password_confirmation&quot; label=&quot;Confirm Password&quot; type=&quot;password&quot; required /&gt;</span>
+
+<span class="x">                &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Create User&lt;/button&gt;</span>
+<span class="x">                &lt;a href=&quot;{{ route(&#39;users.index&#39;) }}&quot; class=&quot;btn btn-secondary&quot;&gt;Cancel&lt;/a&gt;</span>
+<span class="x">            &lt;/form&gt;</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@endsection</span>
+</code></pre></div>
+
+<h2 id="includes-and-partials">Includes and Partials</h2>
+<h3 id="include">@include</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">@include(&#39;partials.header&#39;)</span>
+
+<span class="x">@include(&#39;partials.footer&#39;, [&#39;year&#39; =&gt; date(&#39;Y&#39;)])</span>
+
+<span class="x">@includeIf(&#39;partials.custom&#39;, [&#39;data&#39; =&gt; $data])</span>
+
+<span class="x">@includeWhen($user-&gt;isAdmin(), &#39;partials.admin-panel&#39;)</span>
+</code></pre></div>
+
+<h3 id="includefirst">@includeFirst</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">@includeFirst([&#39;partials.custom&#39;, &#39;partials.default&#39;])</span>
+</code></pre></div>
+
+<h2 id="custom-directives">Custom Directives</h2>
+<h3 id="creating-custom-directives">Creating Custom Directives</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- app/Providers/AppServiceProvider.php --&gt;</span>
+<span class="x">use Illuminate\Support\Facades\Blade;</span>
+
+<span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    Blade::directive(&#39;datetime&#39;, function ($expression) {</span>
+<span class="x">        return &quot;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="p">(</span><span class="nv">$expression</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">format</span><span class="p">(</span><span class="s1">&#39;M d, Y H:i:s&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x">&quot;;</span>
+<span class="x">    });</span>
+
+<span class="x">    Blade::directive(&#39;money&#39;, function ($expression) {</span>
+<span class="x">        return &quot;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="s1">&#39;$&#39;</span> <span class="o">.</span> <span class="nb">number_format</span><span class="p">(</span><span class="nv">$expression</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="x">&quot;;</span>
+<span class="x">    });</span>
+
+<span class="x">    Blade::if(&#39;admin&#39;, function () {</span>
+<span class="x">        return auth()-&gt;check() &amp;&amp; auth()-&gt;user()-&gt;isAdmin();</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="using-custom-directives">Using Custom Directives</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;p&gt;Created: @datetime($user-&gt;created_at)&lt;/p&gt;</span>
+<span class="x">&lt;p&gt;Price: @money($product-&gt;price)&lt;/p&gt;</span>
+
+<span class="x">@admin</span>
+<span class="x">    &lt;p&gt;This content is only visible to admins.&lt;/p&gt;</span>
+<span class="x">@endadmin</span>
+</code></pre></div>
+
+<h2 id="raw-php">Raw PHP</h2>
+<h3 id="php-directive">@php Directive</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">@php</span>
+<span class="x">    $users = App\Models\User::all();</span>
+<span class="x">    $count = $users-&gt;count();</span>
+<span class="x">@endphp</span>
+
+<span class="x">&lt;p&gt;Total users: {{ $count }}&lt;/p&gt;</span>
+</code></pre></div>
+
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="displaying-errors">Displaying Errors</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">@if($errors-&gt;any())</span>
+<span class="x">    &lt;div class=&quot;alert alert-danger&quot;&gt;</span>
+<span class="x">        &lt;ul class=&quot;mb-0&quot;&gt;</span>
+<span class="x">            @foreach($errors-&gt;all() as $error)</span>
+<span class="x">                &lt;li&gt;{{ $error }}&lt;/li&gt;</span>
+<span class="x">            @endforeach</span>
+<span class="x">        &lt;/ul&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@endif</span>
+
+<span class="x">&lt;!-- For specific fields --&gt;</span>
+<span class="x">@error(&#39;email&#39;)</span>
+<span class="x">    &lt;div class=&quot;text-danger&quot;&gt;{{ $message }}&lt;/div&gt;</span>
+<span class="x">@enderror</span>
+</code></pre></div>
+
+<h3 id="old-input">Old Input</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;input type=&quot;text&quot; name=&quot;name&quot; value=&quot;{{ old(&#39;name&#39;, $user-&gt;name ?? &#39;&#39;) }}&quot;&gt;</span>
+</code></pre></div>
+
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-keep-views-simple">1. Keep Views Simple</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- Good --&gt;</span>
+<span class="x">@foreach($users as $user)</span>
+<span class="x">    &lt;x-user-card :user=&quot;$user&quot; /&gt;</span>
+<span class="x">@endforeach</span>
+
+<span class="x">&lt;!-- Bad --&gt;</span>
+<span class="x">@foreach($users as $user)</span>
+<span class="x">    &lt;div class=&quot;card&quot;&gt;</span>
+<span class="x">        &lt;div class=&quot;card-body&quot;&gt;</span>
+<span class="x">            &lt;h5 class=&quot;card-title&quot;&gt;{{ $user-&gt;name }}&lt;/h5&gt;</span>
+<span class="x">            &lt;p class=&quot;card-text&quot;&gt;{{ $user-&gt;email }}&lt;/p&gt;</span>
+<span class="x">            &lt;!-- Lots of HTML --&gt;</span>
+<span class="x">        &lt;/div&gt;</span>
+<span class="x">    &lt;/div&gt;</span>
+<span class="x">@endforeach</span>
+</code></pre></div>
+
+<h3 id="2-use-components-for-reusable-ui">2. Use Components for Reusable UI</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- Create reusable components --&gt;</span>
+<span class="x">&lt;x-button type=&quot;submit&quot; variant=&quot;primary&quot;&gt;Save&lt;/x-button&gt;</span>
+<span class="x">&lt;x-modal title=&quot;Delete User&quot; id=&quot;deleteModal&quot;&gt;</span>
+<span class="x">    Are you sure you want to delete this user?</span>
+<span class="x">&lt;/x-modal&gt;</span>
+</code></pre></div>
+
+<h3 id="3-organize-views-properly">3. Organize Views Properly</h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">resources</span><span class="o">/</span><span class="nv">views</span><span class="o">/</span>
+├──<span class="w"> </span><span class="nv">layouts</span><span class="o">/</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">app</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>└──<span class="w"> </span><span class="nv">admin</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+├──<span class="w"> </span><span class="nv">components</span><span class="o">/</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">alert</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">button</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>└──<span class="w"> </span><span class="nv">modal</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+├──<span class="w"> </span><span class="nv">partials</span><span class="o">/</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">header</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>└──<span class="w"> </span><span class="nv">footer</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+├──<span class="w"> </span><span class="nv">users</span><span class="o">/</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">index</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="k">show</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>├──<span class="w"> </span><span class="nv">create</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+│<span class="w">   </span>└──<span class="w"> </span><span class="nv">edit</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+└──<span class="w"> </span><span class="nv">posts</span><span class="o">/</span>
+<span class="w">    </span>├──<span class="w"> </span><span class="nv">index</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+<span class="w">    </span>└──<span class="w"> </span><span class="k">show</span>.<span class="nv">blade</span>.<span class="nv">php</span>
+</code></pre></div>
+
+<h3 id="4-use-view-composers-for-shared-data">4. Use View Composers for Shared Data</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">&lt;!-- app/Providers/AppServiceProvider.php --&gt;</span>
+<span class="x">use Illuminate\Support\Facades\View;</span>
+
+<span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    View::composer(&#39;*&#39;, function ($view) {</span>
+<span class="x">        $view-&gt;with(&#39;currentUser&#39;, auth()-&gt;user());</span>
+<span class="x">    });</span>
+
+<span class="x">    View::composer(&#39;layouts.app&#39;, function ($view) {</span>
+<span class="x">        $view-&gt;with(&#39;categories&#39;, Category::all());</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="5-cache-views-in-production">5. Cache Views in Production</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>view:cache
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Basic Blade syntax and directives</li>
+<li>✅ Conditional statements and loops</li>
+<li>✅ Layouts and sections</li>
+<li>✅ Components (class-based and anonymous)</li>
+<li>✅ Forms and CSRF protection</li>
+<li>✅ Includes and partials</li>
+<li>✅ Custom directives</li>
+<li>✅ Error handling</li>
+<li>✅ Best practices for Blade templates</li>
+</ul>
+<p>Blade provides a powerful and elegant way to create dynamic views in Laravel. In the next chapter, we'll explore Eloquent ORM for working with databases.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/05-blade.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="04-controllers.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="06-eloquent.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

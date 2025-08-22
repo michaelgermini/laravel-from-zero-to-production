@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 02-installation: Installation - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 02-installation: Installation</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-download"></i> Chapter 02-installation: Installation
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-2-installation-and-setup">Chapter 2: Installation and Setup</h1>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before installing Laravel, you need to ensure your development environment meets the following requirements:</p>
+<h3 id="system-requirements">System Requirements</h3>
+<h4 id="php-requirements">PHP Requirements</h4>
+<ul>
+<li><strong>PHP 8.1 or higher</strong></li>
+<li><strong>Required PHP Extensions</strong>:</li>
+<li>BCMath PHP Extension</li>
+<li>Ctype PHP Extension</li>
+<li>cURL PHP Extension</li>
+<li>DOM PHP Extension</li>
+<li>Fileinfo PHP Extension</li>
+<li>JSON PHP Extension</li>
+<li>Mbstring PHP Extension</li>
+<li>OpenSSL PHP Extension</li>
+<li>PCRE PHP Extension</li>
+<li>PDO PHP Extension</li>
+<li>Tokenizer PHP Extension</li>
+<li>XML PHP Extension</li>
+</ul>
+<h4 id="additional-software">Additional Software</h4>
+<ul>
+<li><strong>Composer</strong> (PHP package manager)</li>
+<li><strong>Node.js &amp; NPM</strong> (for frontend asset compilation)</li>
+<li><strong>Database</strong> (MySQL, PostgreSQL, SQLite, or SQL Server)</li>
+<li><strong>Web Server</strong> (Apache, Nginx, or Laravel's built-in server)</li>
+</ul>
+<h2 id="installing-prerequisites">Installing Prerequisites</h2>
+<h3 id="1-installing-php">1. Installing PHP</h3>
+<h4 id="on-windows">On Windows</h4>
+<ol>
+<li><strong>Download XAMPP or WAMP</strong>:</li>
+<li>XAMPP: <a href="https://www.apachefriends.org/">apachefriends.org</a></li>
+<li>
+<p>WAMP: <a href="https://www.wampserver.com/">wampserver.com</a></p>
+</li>
+<li>
+<p><strong>Or use Chocolatey</strong>:<br />
+<code>bash
+   choco install php</code></p>
+</li>
+</ol>
+<h4 id="on-macos">On macOS</h4>
+<ol>
+<li>
+<p><strong>Using Homebrew</strong>:<br />
+<code>bash
+   brew install php</code></p>
+</li>
+<li>
+<p><strong>Using MAMP</strong>:</p>
+</li>
+<li>Download from <a href="https://www.mamp.info/">mamp.info</a></li>
+</ol>
+<h4 id="on-linux-ubuntudebian">On Linux (Ubuntu/Debian)</h4>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>php8.1<span class="w"> </span>php8.1-cli<span class="w"> </span>php8.1-common<span class="w"> </span>php8.1-mysql<span class="w"> </span>php8.1-zip<span class="w"> </span>php8.1-gd<span class="w"> </span>php8.1-mbstring<span class="w"> </span>php8.1-curl<span class="w"> </span>php8.1-xml<span class="w"> </span>php8.1-bcmath
+</code></pre></div>
+
+<h4 id="on-linux-centosrhel">On Linux (CentOS/RHEL)</h4>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>epel-release
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>php<span class="w"> </span>php-cli<span class="w"> </span>php-common<span class="w"> </span>php-mysql<span class="w"> </span>php-zip<span class="w"> </span>php-gd<span class="w"> </span>php-mbstring<span class="w"> </span>php-curl<span class="w"> </span>php-xml<span class="w"> </span>php-bcmath
+</code></pre></div>
+
+<h3 id="2-installing-composer">2. Installing Composer</h3>
+<h4 id="on-windows_1">On Windows</h4>
+<ol>
+<li><strong>Download Composer-Setup.exe</strong> from <a href="https://getcomposer.org/download/">getcomposer.org</a></li>
+<li>Run the installer and follow the setup wizard</li>
+</ol>
+<h4 id="on-macoslinux">On macOS/Linux</h4>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-sS<span class="w"> </span>https://getcomposer.org/installer<span class="w"> </span><span class="p">|</span><span class="w"> </span>php
+sudo<span class="w"> </span>mv<span class="w"> </span>composer.phar<span class="w"> </span>/usr/local/bin/composer
+</code></pre></div>
+
+<h3 id="3-installing-nodejs">3. Installing Node.js</h3>
+<h4 id="on-windows_2">On Windows</h4>
+<ol>
+<li>Download from <a href="https://nodejs.org/">nodejs.org</a></li>
+<li>Run the installer</li>
+</ol>
+<h4 id="on-macos_1">On macOS</h4>
+<div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>node
+</code></pre></div>
+
+<h4 id="on-linux">On Linux</h4>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://deb.nodesource.com/setup_lts.x<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span>bash<span class="w"> </span>-
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>nodejs
+</code></pre></div>
+
+<h2 id="installing-laravel">Installing Laravel</h2>
+<h3 id="method-1-using-laravel-installer-recommended">Method 1: Using Laravel Installer (Recommended)</h3>
+<p>The Laravel installer is the easiest way to create new Laravel projects.</p>
+<h4 id="1-install-laravel-installer">1. Install Laravel Installer</h4>
+<div class="codehilite"><pre><span></span><code>composer<span class="w"> </span>global<span class="w"> </span>require<span class="w"> </span>laravel/installer
+</code></pre></div>
+
+<h4 id="2-create-a-new-project">2. Create a New Project</h4>
+<div class="codehilite"><pre><span></span><code>laravel<span class="w"> </span>new<span class="w"> </span>my-project
+<span class="nb">cd</span><span class="w"> </span>my-project
+</code></pre></div>
+
+<h3 id="method-2-using-composer-create-project">Method 2: Using Composer Create-Project</h3>
+<p>If you prefer not to install the Laravel installer globally:</p>
+<div class="codehilite"><pre><span></span><code>composer<span class="w"> </span>create-project<span class="w"> </span>laravel/laravel<span class="w"> </span>my-project
+<span class="nb">cd</span><span class="w"> </span>my-project
+</code></pre></div>
+
+<h3 id="method-3-using-laravel-sail-docker">Method 3: Using Laravel Sail (Docker)</h3>
+<p>Laravel Sail provides a Docker-based development environment:</p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;https://laravel.build/my-project&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
+<span class="nb">cd</span><span class="w"> </span>my-project
+./vendor/bin/sail<span class="w"> </span>up
+</code></pre></div>
+
+<h2 id="project-setup">Project Setup</h2>
+<h3 id="1-environment-configuration">1. Environment Configuration</h3>
+<p>After creating your Laravel project, you need to configure the environment:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Copy the environment file</span>
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+
+<span class="c1"># Generate application key</span>
+php<span class="w"> </span>artisan<span class="w"> </span>key:generate
+</code></pre></div>
+
+<h3 id="2-database-configuration">2. Database Configuration</h3>
+<p>Edit the <code>.env</code> file to configure your database:</p>
+<div class="codehilite"><pre><span></span><code>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+</code></pre></div>
+
+<h3 id="3-install-dependencies">3. Install Dependencies</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install PHP dependencies</span>
+composer<span class="w"> </span>install
+
+<span class="c1"># Install Node.js dependencies (if using frontend assets)</span>
+npm<span class="w"> </span>install
+</code></pre></div>
+
+<h3 id="4-run-migrations">4. Run Migrations</h3>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>migrate
+</code></pre></div>
+
+<h2 id="development-server">Development Server</h2>
+<h3 id="using-laravels-built-in-server">Using Laravel's Built-in Server</h3>
+<p>Laravel includes a development server for local development:</p>
+<div class="codehilite"><pre><span></span><code>php<span class="w"> </span>artisan<span class="w"> </span>serve
+</code></pre></div>
+
+<p>This will start the server at <code>http://localhost:8000</code></p>
+<h3 id="using-laravel-sail-docker">Using Laravel Sail (Docker)</h3>
+<p>If you're using Laravel Sail:</p>
+<div class="codehilite"><pre><span></span><code>./vendor/bin/sail<span class="w"> </span>up
+</code></pre></div>
+
+<h3 id="using-other-web-servers">Using Other Web Servers</h3>
+<h4 id="apache-configuration">Apache Configuration</h4>
+<p>Create a virtual host configuration:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:80</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>my-project.local
+<span class="w">    </span><span class="nb">DocumentRoot</span><span class="w"> </span><span class="sx">/path/to/my-project/public</span>
+
+<span class="w">    </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">/path/to/my-project/public</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nb">AllowOverride</span><span class="w"> </span><span class="k">All</span>
+<span class="w">        </span><span class="nb">Require</span><span class="w"> </span><span class="k">all</span><span class="w"> </span>granted
+<span class="w">    </span><span class="nt">&lt;/Directory&gt;</span>
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div>
+
+<h4 id="nginx-configuration">Nginx Configuration</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">my-project.local</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/path/to/my-project/public</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w"> </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Content-Type-Options</span><span class="w"> </span><span class="s">&quot;nosniff&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">charset</span><span class="w"> </span><span class="s">utf-8</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.php?</span><span class="nv">$query_string</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/favicon.ico</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="kn">log_not_found</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/robots.txt</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="kn">log_not_found</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">error_page</span><span class="w"> </span><span class="mi">404</span><span class="w"> </span><span class="s">/index.php</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">unix:/var/run/php/php8.1-fpm.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_param</span><span class="w"> </span><span class="s">SCRIPT_FILENAME</span><span class="w"> </span><span class="nv">$realpath_root$fastcgi_script_name</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">include</span><span class="w"> </span><span class="s">fastcgi_params</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">/\.(?!well-known).*</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">deny</span><span class="w"> </span><span class="s">all</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="ide-setup">IDE Setup</h2>
+<h3 id="recommended-ides">Recommended IDEs</h3>
+<ol>
+<li><strong>PhpStorm</strong> (JetBrains)</li>
+<li>Full Laravel support</li>
+<li>Built-in debugging</li>
+<li>
+<p>Code completion</p>
+</li>
+<li>
+<p><strong>Visual Studio Code</strong></p>
+</li>
+<li>Free and lightweight</li>
+<li>Excellent Laravel extensions</li>
+<li>
+<p>Integrated terminal</p>
+</li>
+<li>
+<p><strong>Sublime Text</strong></p>
+</li>
+<li>Fast and lightweight</li>
+<li>Extensive plugin ecosystem</li>
+</ol>
+<h3 id="useful-extensions-for-vs-code">Useful Extensions for VS Code</h3>
+<ul>
+<li><strong>Laravel Extension Pack</strong></li>
+<li><strong>PHP Intelephense</strong></li>
+<li><strong>Laravel Blade Snippets</strong></li>
+<li><strong>Laravel Artisan</strong></li>
+<li><strong>Laravel Snippets</strong></li>
+</ul>
+<h2 id="project-structure">Project Structure</h2>
+<p>After installation, your Laravel project will have the following structure:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">my</span><span class="o">-</span><span class="n">project</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">app</span><span class="o">/</span><span class="w">                    </span><span class="c1"># Application core code</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Console</span><span class="o">/</span><span class="w">           </span><span class="c1"># Artisan commands</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Exceptions</span><span class="o">/</span><span class="w">        </span><span class="c1"># Exception handlers</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Http</span><span class="o">/</span><span class="w">              </span><span class="c1"># HTTP layer</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Controllers</span><span class="o">/</span><span class="w">   </span><span class="c1"># Controllers</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Middleware</span><span class="o">/</span><span class="w">    </span><span class="c1"># Middleware</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">Requests</span><span class="o">/</span><span class="w">      </span><span class="c1"># Form requests</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">Models</span><span class="o">/</span><span class="w">            </span><span class="c1"># Eloquent models</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">Providers</span><span class="o">/</span><span class="w">         </span><span class="c1"># Service providers</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">bootstrap</span><span class="o">/</span><span class="w">             </span><span class="c1"># Framework bootstrap files</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">config</span><span class="o">/</span><span class="w">                </span><span class="c1"># Configuration files</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">database</span><span class="o">/</span><span class="w">              </span><span class="c1"># Database files</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">factories</span><span class="o">/</span><span class="w">         </span><span class="c1"># Model factories</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">migrations</span><span class="o">/</span><span class="w">        </span><span class="c1"># Database migrations</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">seeders</span><span class="o">/</span><span class="w">           </span><span class="c1"># Database seeders</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">public</span><span class="o">/</span><span class="w">                </span><span class="c1"># Web server document root</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">resources</span><span class="o">/</span><span class="w">             </span><span class="c1"># Application resources</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">css</span><span class="o">/</span><span class="w">              </span><span class="c1"># CSS files</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">js</span><span class="o">/</span><span class="w">               </span><span class="c1"># JavaScript files</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">lang</span><span class="o">/</span><span class="w">             </span><span class="c1"># Language files</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">views</span><span class="o">/</span><span class="w">            </span><span class="c1"># Blade templates</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">routes</span><span class="o">/</span><span class="w">                </span><span class="c1"># Route definitions</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">storage</span><span class="o">/</span><span class="w">               </span><span class="c1"># Application storage</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">tests</span><span class="o">/</span><span class="w">                 </span><span class="c1"># Test files</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">vendor</span><span class="o">/</span><span class="w">                </span><span class="c1"># Composer dependencies</span>
+<span class="err">├──</span><span class="w"> </span><span class="o">.</span><span class="n">env</span><span class="w">                   </span><span class="c1"># Environment variables</span>
+<span class="err">├──</span><span class="w"> </span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">example</span><span class="w">          </span><span class="c1"># Environment template</span>
+<span class="err">├──</span><span class="w"> </span><span class="o">.</span><span class="n">gitignore</span><span class="w">            </span><span class="c1"># Git ignore file</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">artisan</span><span class="w">               </span><span class="c1"># Artisan command-line tool</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">composer</span><span class="o">.</span><span class="n">json</span><span class="w">         </span><span class="c1"># Composer configuration</span>
+<span class="err">└──</span><span class="w"> </span><span class="n">package</span><span class="o">.</span><span class="n">json</span><span class="w">          </span><span class="c1"># NPM configuration</span>
+</code></pre></div>
+
+<h2 id="common-issues-and-solutions">Common Issues and Solutions</h2>
+<h3 id="1-permission-issues">1. Permission Issues</h3>
+<h4 id="on-linuxmacos">On Linux/macOS</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Set proper permissions</span>
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+</code></pre></div>
+
+<h4 id="on-windows_3">On Windows</h4>
+<p>Ensure your web server has write permissions to the <code>storage</code> and <code>bootstrap/cache</code> directories.</p>
+<h3 id="2-composer-memory-limit">2. Composer Memory Limit</h3>
+<p>If you encounter memory issues during installation:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Increase PHP memory limit</span>
+php<span class="w"> </span>-d<span class="w"> </span><span class="nv">memory_limit</span><span class="o">=</span>-1<span class="w"> </span>composer<span class="w"> </span>install
+</code></pre></div>
+
+<h3 id="3-ssl-certificate-issues">3. SSL Certificate Issues</h3>
+<p>For local development, you can ignore SSL certificate issues:</p>
+<div class="codehilite"><pre><span></span><code>composer<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>disable-tls<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+
+<h3 id="4-extension-missing">4. Extension Missing</h3>
+<p>If you get an error about a missing PHP extension:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># On Ubuntu/Debian</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>php8.1-<span class="o">[</span>extension-name<span class="o">]</span>
+
+<span class="c1"># On CentOS/RHEL</span>
+sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>php-<span class="o">[</span>extension-name<span class="o">]</span>
+</code></pre></div>
+
+<h2 id="verification">Verification</h2>
+<p>To verify your installation is working correctly:</p>
+<ol>
+<li>
+<p><strong>Start the development server</strong>:<br />
+<code>bash
+   php artisan serve</code></p>
+</li>
+<li>
+<p><strong>Visit your application</strong>:<br />
+   Open your browser and navigate to <code>http://localhost:8000</code></p>
+</li>
+<li>
+<p><strong>Check Laravel version</strong>:<br />
+<code>bash
+   php artisan --version</code></p>
+</li>
+<li>
+<p><strong>Run health check</strong>:<br />
+<code>bash
+   php artisan about</code></p>
+</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now that you have Laravel installed and running, you're ready to start building your first application. In the next chapter, we'll explore Laravel's routing system and learn how to define the URLs that your application will respond to.</p>
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Installing PHP and required extensions</li>
+<li>✅ Installing Composer and Node.js</li>
+<li>✅ Creating a new Laravel project</li>
+<li>✅ Configuring the environment</li>
+<li>✅ Setting up the development server</li>
+<li>✅ Understanding the project structure</li>
+<li>✅ Troubleshooting common issues</li>
+</ul>
+<p>Your Laravel development environment is now ready! Let's move on to learning about routing in the next chapter.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/02-installation.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="01-introduction.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="03-routing.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

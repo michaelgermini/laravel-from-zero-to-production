@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 12-deployment: Deployment - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 12-deployment: Deployment</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-rocket"></i> Chapter 12-deployment: Deployment
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-12-deployment">Chapter 12: Deployment</h1>
+<h2 id="what-is-deployment">What is Deployment?</h2>
+<p>Deployment is the process of making your Laravel application available to users on a production server. This involves setting up the server environment, configuring the application, and ensuring it runs reliably in production.</p>
+<h2 id="pre-deployment-checklist">Pre-Deployment Checklist</h2>
+<h3 id="environment-configuration">Environment Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Set production environment</span>
+<span class="nv">APP_ENV</span><span class="o">=</span>production
+<span class="nv">APP_DEBUG</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">APP_URL</span><span class="o">=</span>https://yourdomain.com
+
+<span class="c1"># Database configuration</span>
+<span class="nv">DB_CONNECTION</span><span class="o">=</span>mysql
+<span class="nv">DB_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1
+<span class="nv">DB_PORT</span><span class="o">=</span><span class="m">3306</span>
+<span class="nv">DB_DATABASE</span><span class="o">=</span>your_database
+<span class="nv">DB_USERNAME</span><span class="o">=</span>your_username
+<span class="nv">DB_PASSWORD</span><span class="o">=</span>your_password
+
+<span class="c1"># Cache and session</span>
+<span class="nv">CACHE_DRIVER</span><span class="o">=</span>redis
+<span class="nv">SESSION_DRIVER</span><span class="o">=</span>redis
+<span class="nv">QUEUE_CONNECTION</span><span class="o">=</span>redis
+
+<span class="c1"># Mail configuration</span>
+<span class="nv">MAIL_MAILER</span><span class="o">=</span>smtp
+<span class="nv">MAIL_HOST</span><span class="o">=</span>your-smtp-host
+<span class="nv">MAIL_PORT</span><span class="o">=</span><span class="m">587</span>
+<span class="nv">MAIL_USERNAME</span><span class="o">=</span>your-email
+<span class="nv">MAIL_PASSWORD</span><span class="o">=</span>your-password
+<span class="nv">MAIL_ENCRYPTION</span><span class="o">=</span>tls
+<span class="nv">MAIL_FROM_ADDRESS</span><span class="o">=</span>noreply@yourdomain.com
+<span class="nv">MAIL_FROM_NAME</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">APP_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<h3 id="security-considerations">Security Considerations</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Generate application key</span>
+php<span class="w"> </span>artisan<span class="w"> </span>key:generate
+
+<span class="c1"># Set secure session configuration</span>
+<span class="nv">SESSION_SECURE_COOKIE</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">SESSION_SAME_SITE</span><span class="o">=</span>strict
+
+<span class="c1"># Enable HTTPS</span>
+<span class="nv">FORCE_HTTPS</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Set secure headers</span>
+<span class="nv">SECURE_HEADERS</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+
+<h3 id="performance-optimization">Performance Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Enable caching</span>
+php<span class="w"> </span>artisan<span class="w"> </span>config:cache
+php<span class="w"> </span>artisan<span class="w"> </span>route:cache
+php<span class="w"> </span>artisan<span class="w"> </span>view:cache
+
+<span class="c1"># Optimize autoloader</span>
+composer<span class="w"> </span>install<span class="w"> </span>--optimize-autoloader<span class="w"> </span>--no-dev
+
+<span class="c1"># Set proper permissions</span>
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+</code></pre></div>
+
+<h2 id="deployment-methods">Deployment Methods</h2>
+<h3 id="1-traditional-server-deployment">1. Traditional Server Deployment</h3>
+<h4 id="server-requirements">Server Requirements</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install required packages</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>mysql-server<span class="w"> </span>php8.1-fpm<span class="w"> </span>php8.1-mysql<span class="w"> </span>php8.1-xml<span class="w"> </span>php8.1-mbstring<span class="w"> </span>php8.1-curl<span class="w"> </span>php8.1-zip<span class="w"> </span>php8.1-gd<span class="w"> </span>php8.1-bcmath<span class="w"> </span>php8.1-redis<span class="w"> </span>composer
+</code></pre></div>
+
+<h4 id="nginx-configuration">Nginx Configuration</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">yourdomain.com</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/your-app/public</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w"> </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Content-Type-Options</span><span class="w"> </span><span class="s">&quot;nosniff&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">charset</span><span class="w"> </span><span class="s">utf-8</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.php?</span><span class="nv">$query_string</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/favicon.ico</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="kn">log_not_found</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/robots.txt</span><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="kn">log_not_found</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">error_page</span><span class="w"> </span><span class="mi">404</span><span class="w"> </span><span class="s">/index.php</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">unix:/var/run/php/php8.1-fpm.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_param</span><span class="w"> </span><span class="s">SCRIPT_FILENAME</span><span class="w"> </span><span class="nv">$realpath_root$fastcgi_script_name</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">include</span><span class="w"> </span><span class="s">fastcgi_params</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">/\.(?!well-known).*</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">deny</span><span class="w"> </span><span class="s">all</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h4 id="deployment-script">Deployment Script</h4>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Deployment script</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="c1"># Variables</span>
+<span class="nv">APP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/www/your-app&quot;</span>
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/backups/your-app&quot;</span>
+<span class="nv">RELEASE_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$APP_DIR</span><span class="s2">/releases/</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="c1"># Create release directory</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$RELEASE_DIR</span>
+
+<span class="c1"># Clone or pull latest code</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/your-username/your-app.git<span class="w"> </span><span class="nv">$RELEASE_DIR</span>
+
+<span class="c1"># Install dependencies</span>
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$RELEASE_DIR</span>
+composer<span class="w"> </span>install<span class="w"> </span>--optimize-autoloader<span class="w"> </span>--no-dev
+
+<span class="c1"># Copy environment file</span>
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+
+<span class="c1"># Set permissions</span>
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+
+<span class="c1"># Run migrations</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate<span class="w"> </span>--force
+
+<span class="c1"># Optimize application</span>
+php<span class="w"> </span>artisan<span class="w"> </span>config:cache
+php<span class="w"> </span>artisan<span class="w"> </span>route:cache
+php<span class="w"> </span>artisan<span class="w"> </span>view:cache
+
+<span class="c1"># Create symlink</span>
+ln<span class="w"> </span>-sfn<span class="w"> </span><span class="nv">$RELEASE_DIR</span><span class="w"> </span><span class="nv">$APP_DIR</span>/current
+
+<span class="c1"># Restart services</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>php8.1-fpm
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>nginx
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deployment completed successfully!&quot;</span>
+</code></pre></div>
+
+<h3 id="2-laravel-forge-deployment">2. Laravel Forge Deployment</h3>
+<p>Laravel Forge is a server management service that simplifies deployment:</p>
+<h4 id="setting-up-forge">Setting Up Forge</h4>
+<ol>
+<li><strong>Connect Server</strong>: Add your server to Forge</li>
+<li><strong>Install PHP</strong>: Install PHP 8.1 and required extensions</li>
+<li><strong>Install Database</strong>: Install MySQL or PostgreSQL</li>
+<li><strong>Create Site</strong>: Create a new site in Forge</li>
+<li><strong>Deploy</strong>: Use Forge's deployment features</li>
+</ol>
+<h4 id="forge-deployment-script">Forge Deployment Script</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Forge deployment script</span>
+<span class="nb">cd</span><span class="w"> </span>/home/forge/yourdomain.com
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+composer<span class="w"> </span>install<span class="w"> </span>--no-interaction<span class="w"> </span>--prefer-dist<span class="w"> </span>--optimize-autoloader
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span>artisan<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nv">$FORGE_PHP</span><span class="w"> </span>artisan<span class="w"> </span>migrate<span class="w"> </span>--force
+<span class="w">    </span><span class="nv">$FORGE_PHP</span><span class="w"> </span>artisan<span class="w"> </span>config:cache
+<span class="w">    </span><span class="nv">$FORGE_PHP</span><span class="w"> </span>artisan<span class="w"> </span>route:cache
+<span class="w">    </span><span class="nv">$FORGE_PHP</span><span class="w"> </span>artisan<span class="w"> </span>view:cache
+<span class="k">fi</span>
+</code></pre></div>
+
+<h3 id="3-laravel-vapor-deployment">3. Laravel Vapor Deployment</h3>
+<p>Laravel Vapor is a serverless deployment platform:</p>
+<h4 id="installing-vapor">Installing Vapor</h4>
+<div class="codehilite"><pre><span></span><code>composer<span class="w"> </span>require<span class="w"> </span>laravel/vapor-cli<span class="w"> </span>--update-with-dependencies
+vapor<span class="w"> </span>install
+</code></pre></div>
+
+<h4 id="vapor-configuration">Vapor Configuration</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># vapor.yml</span>
+<span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your-app-id</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your-app-name</span>
+<span class="nt">environments</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">production</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
+<span class="w">        </span><span class="nt">cli-memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512</span>
+<span class="w">        </span><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;php-8.1&#39;</span>
+<span class="w">        </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;composer</span><span class="nv"> </span><span class="s">install</span><span class="nv"> </span><span class="s">--no-dev&#39;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;php</span><span class="nv"> </span><span class="s">artisan</span><span class="nv"> </span><span class="s">event:cache&#39;</span>
+<span class="w">        </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;php</span><span class="nv"> </span><span class="s">artisan</span><span class="nv"> </span><span class="s">migrate</span><span class="nv"> </span><span class="s">--force&#39;</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">APP_ENV</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+<span class="w">            </span><span class="nt">APP_DEBUG</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+
+<h4 id="deploying-with-vapor">Deploying with Vapor</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Deploy to production</span>
+vapor<span class="w"> </span>deploy<span class="w"> </span>production
+
+<span class="c1"># Deploy with environment variables</span>
+vapor<span class="w"> </span>deploy<span class="w"> </span>production<span class="w"> </span>--env<span class="o">=</span>production
+</code></pre></div>
+
+<h3 id="4-docker-deployment">4. Docker Deployment</h3>
+<h4 id="dockerfile">Dockerfile</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">php:8.1-fpm</span>
+
+<span class="c"># Install system dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>git<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>curl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libpng-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libonig-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libxml2-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>zip<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>unzip
+
+<span class="c"># Clear cache</span>
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>clean<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*
+
+<span class="c"># Install PHP extensions</span>
+<span class="k">RUN</span><span class="w"> </span>docker-php-ext-install<span class="w"> </span>pdo_mysql<span class="w"> </span>mbstring<span class="w"> </span>exif<span class="w"> </span>pcntl<span class="w"> </span>bcmath<span class="w"> </span>gd
+
+<span class="c"># Get latest Composer</span>
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>composer:latest<span class="w"> </span>/usr/bin/composer<span class="w"> </span>/usr/bin/composer
+
+<span class="c"># Set working directory</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/var/www</span>
+
+<span class="c"># Copy existing application directory contents</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>/var/www
+
+<span class="c"># Copy existing application directory permissions</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>www-data:www-data<span class="w"> </span>.<span class="w"> </span>/var/www
+
+<span class="c"># Install dependencies</span>
+<span class="k">RUN</span><span class="w"> </span>composer<span class="w"> </span>install<span class="w"> </span>--optimize-autoloader<span class="w"> </span>--no-dev
+
+<span class="c"># Change current user to www</span>
+<span class="k">USER</span><span class="w"> </span><span class="s">www-data</span>
+
+<span class="c"># Expose port 9000 and start php-fpm server</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">9000</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;php-fpm&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<h4 id="docker-compose">Docker Compose</h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># docker-compose.yml</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3&#39;</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">app</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_app</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/www</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./:/var/www</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_network</span>
+
+<span class="w">  </span><span class="nt">nginx</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:alpine</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_nginx</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8000:80&quot;</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./:/var/www</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./docker/nginx/conf.d:/etc/nginx/conf.d</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_network</span>
+
+<span class="w">  </span><span class="nt">db</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql:8.0</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_db</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel</span>
+<span class="w">      </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your_mysql_root_password</span>
+<span class="w">      </span><span class="nt">MYSQL_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your_mysql_password</span>
+<span class="w">      </span><span class="nt">MYSQL_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your_mysql_user</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dbdata:/var/lib/mysql</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_network</span>
+
+<span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:alpine</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_redis</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_network</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">laravel_network</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dbdata</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</code></pre></div>
+
+<h2 id="continuous-integrationcontinuous-deployment-cicd">Continuous Integration/Continuous Deployment (CI/CD)</h2>
+<h3 id="github-actions">GitHub Actions</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .github/workflows/deploy.yml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy to Production</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">main</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup PHP</span>
+<span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shivammathur/setup-php@v2</span>
+<span class="w">      </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">php-version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;8.1&#39;</span>
+<span class="w">        </span><span class="nt">extensions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo, xml</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Copy .env</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">php -r &quot;file_exists(&#39;.env&#39;) || copy(&#39;.env.example&#39;, &#39;.env&#39;);&quot;</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install Dependencies</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Generate key</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">php artisan key:generate</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Directory Permissions</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chmod -R 777 storage bootstrap/cache</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Database</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">mkdir -p database</span>
+<span class="w">        </span><span class="no">touch database/database.sqlite</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Execute tests (Unit and Feature tests) via PHPUnit</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">DB_CONNECTION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sqlite</span>
+<span class="w">        </span><span class="nt">DB_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database/database.sqlite</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vendor/bin/phpunit</span>
+
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy to server</span>
+<span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">appleboy/ssh-action@v0.1.5</span>
+<span class="w">      </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.HOST }}</span>
+<span class="w">        </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.USERNAME }}</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.KEY }}</span>
+<span class="w">        </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">cd /var/www/your-app</span>
+<span class="w">          </span><span class="no">git pull origin main</span>
+<span class="w">          </span><span class="no">composer install --no-dev --optimize-autoloader</span>
+<span class="w">          </span><span class="no">php artisan migrate --force</span>
+<span class="w">          </span><span class="no">php artisan config:cache</span>
+<span class="w">          </span><span class="no">php artisan route:cache</span>
+<span class="w">          </span><span class="no">php artisan view:cache</span>
+<span class="w">          </span><span class="no">sudo systemctl restart php8.1-fpm</span>
+<span class="w">          </span><span class="no">sudo systemctl restart nginx</span>
+</code></pre></div>
+
+<h3 id="gitlab-cicd">GitLab CI/CD</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .gitlab-ci.yml</span>
+<span class="nt">stages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy</span>
+
+<span class="nt">test</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">php:8.1</span>
+<span class="w">  </span><span class="nt">services</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql:8.0</span>
+<span class="w">  </span><span class="nt">variables</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">MYSQL_DATABASE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">laravel_test</span>
+<span class="w">    </span><span class="nt">MYSQL_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span>
+<span class="w">  </span><span class="nt">before_script</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apt-get update -qq &amp;&amp; apt-get install -y -qq git unzip libzip-dev</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker-php-ext-install pdo_mysql zip</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cp .env.example .env</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">composer install --no-interaction --no-progress --prefer-dist</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">php artisan key:generate</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">php artisan migrate --force</span>
+<span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vendor/bin/phpunit</span>
+
+<span class="nt">deploy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">stage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine:latest</span>
+<span class="w">  </span><span class="nt">before_script</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apk add --no-cache openssh-client</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eval $(ssh-agent -s)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo &quot;$SSH_PRIVATE_KEY&quot; | tr -d &#39;\r&#39; | ssh-add -</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mkdir -p ~/.ssh</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">chmod 700 ~/.ssh</span>
+<span class="w">  </span><span class="nt">script</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST &quot;cd /var/www/your-app &amp;&amp; git pull origin main &amp;&amp; composer install --no-dev --optimize-autoloader &amp;&amp; php artisan migrate --force &amp;&amp; php artisan config:cache &amp;&amp; php artisan route:cache &amp;&amp; php artisan view:cache &amp;&amp; sudo systemctl restart php8.1-fpm &amp;&amp; sudo systemctl restart nginx&quot;</span>
+<span class="w">  </span><span class="nt">only</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+</code></pre></div>
+
+<h2 id="environment-specific-configurations">Environment-Specific Configurations</h2>
+<h3 id="production-environment">Production Environment</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/app.php</span>
+<span class="x">&#39;debug&#39; =&gt; env(&#39;APP_DEBUG&#39;, false),</span>
+<span class="x">&#39;env&#39; =&gt; env(&#39;APP_ENV&#39;, &#39;production&#39;),</span>
+
+<span class="x">// config/database.php</span>
+<span class="x">&#39;default&#39; =&gt; env(&#39;DB_CONNECTION&#39;, &#39;mysql&#39;),</span>
+<span class="x">&#39;mysql&#39; =&gt; [</span>
+<span class="x">    &#39;driver&#39; =&gt; &#39;mysql&#39;,</span>
+<span class="x">    &#39;host&#39; =&gt; env(&#39;DB_HOST&#39;, &#39;127.0.0.1&#39;),</span>
+<span class="x">    &#39;port&#39; =&gt; env(&#39;DB_PORT&#39;, &#39;3306&#39;),</span>
+<span class="x">    &#39;database&#39; =&gt; env(&#39;DB_DATABASE&#39;, &#39;forge&#39;),</span>
+<span class="x">    &#39;username&#39; =&gt; env(&#39;DB_USERNAME&#39;, &#39;forge&#39;),</span>
+<span class="x">    &#39;password&#39; =&gt; env(&#39;DB_PASSWORD&#39;, &#39;&#39;),</span>
+<span class="x">    &#39;charset&#39; =&gt; &#39;utf8mb4&#39;,</span>
+<span class="x">    &#39;collation&#39; =&gt; &#39;utf8mb4_unicode_ci&#39;,</span>
+<span class="x">    &#39;prefix&#39; =&gt; &#39;&#39;,</span>
+<span class="x">    &#39;strict&#39; =&gt; true,</span>
+<span class="x">    &#39;engine&#39; =&gt; null,</span>
+<span class="x">],</span>
+
+<span class="x">// config/cache.php</span>
+<span class="x">&#39;default&#39; =&gt; env(&#39;CACHE_DRIVER&#39;, &#39;redis&#39;),</span>
+<span class="x">&#39;redis&#39; =&gt; [</span>
+<span class="x">    &#39;driver&#39; =&gt; &#39;redis&#39;,</span>
+<span class="x">    &#39;connection&#39; =&gt; &#39;cache&#39;,</span>
+<span class="x">    &#39;lock_connection&#39; =&gt; &#39;default&#39;,</span>
+<span class="x">],</span>
+
+<span class="x">// config/session.php</span>
+<span class="x">&#39;driver&#39; =&gt; env(&#39;SESSION_DRIVER&#39;, &#39;redis&#39;),</span>
+<span class="x">&#39;lifetime&#39; =&gt; env(&#39;SESSION_LIFETIME&#39;, 120),</span>
+<span class="x">&#39;expire_on_close&#39; =&gt; false,</span>
+<span class="x">&#39;secure&#39; =&gt; env(&#39;SESSION_SECURE_COOKIE&#39;, true),</span>
+<span class="x">&#39;same_site&#39; =&gt; env(&#39;SESSION_SAME_SITE&#39;, &#39;strict&#39;),</span>
+</code></pre></div>
+
+<h3 id="staging-environment">Staging Environment</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .env.staging</span>
+<span class="nv">APP_ENV</span><span class="o">=</span>staging
+<span class="nv">APP_DEBUG</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">APP_URL</span><span class="o">=</span>https://staging.yourdomain.com
+
+<span class="nv">DB_CONNECTION</span><span class="o">=</span>mysql
+<span class="nv">DB_HOST</span><span class="o">=</span>staging-db-host
+<span class="nv">DB_DATABASE</span><span class="o">=</span>staging_database
+<span class="nv">DB_USERNAME</span><span class="o">=</span>staging_user
+<span class="nv">DB_PASSWORD</span><span class="o">=</span>staging_password
+
+<span class="nv">CACHE_DRIVER</span><span class="o">=</span>file
+<span class="nv">SESSION_DRIVER</span><span class="o">=</span>file
+<span class="nv">QUEUE_CONNECTION</span><span class="o">=</span>sync
+</code></pre></div>
+
+<h2 id="monitoring-and-logging">Monitoring and Logging</h2>
+<h3 id="application-monitoring">Application Monitoring</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/logging.php</span>
+<span class="x">&#39;channels&#39; =&gt; [</span>
+<span class="x">    &#39;stack&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;stack&#39;,</span>
+<span class="x">        &#39;channels&#39; =&gt; [&#39;single&#39;, &#39;daily&#39;],</span>
+<span class="x">        &#39;ignore_exceptions&#39; =&gt; false,</span>
+<span class="x">    ],</span>
+<span class="x">    &#39;single&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;single&#39;,</span>
+<span class="x">        &#39;path&#39; =&gt; storage_path(&#39;logs/laravel.log&#39;),</span>
+<span class="x">        &#39;level&#39; =&gt; env(&#39;LOG_LEVEL&#39;, &#39;debug&#39;),</span>
+<span class="x">    ],</span>
+<span class="x">    &#39;daily&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;daily&#39;,</span>
+<span class="x">        &#39;path&#39; =&gt; storage_path(&#39;logs/laravel.log&#39;),</span>
+<span class="x">        &#39;level&#39; =&gt; env(&#39;LOG_LEVEL&#39;, &#39;debug&#39;),</span>
+<span class="x">        &#39;days&#39; =&gt; 14,</span>
+<span class="x">    ],</span>
+<span class="x">    &#39;slack&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;slack&#39;,</span>
+<span class="x">        &#39;url&#39; =&gt; env(&#39;LOG_SLACK_WEBHOOK_URL&#39;),</span>
+<span class="x">        &#39;username&#39; =&gt; &#39;Laravel Log&#39;,</span>
+<span class="x">        &#39;emoji&#39; =&gt; &#39;:boom:&#39;,</span>
+<span class="x">        &#39;level&#39; =&gt; env(&#39;LOG_LEVEL&#39;, &#39;critical&#39;),</span>
+<span class="x">    ],</span>
+<span class="x">],</span>
+</code></pre></div>
+
+<h3 id="error-tracking">Error Tracking</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/app.php</span>
+<span class="x">&#39;providers&#39; =&gt; [</span>
+<span class="x">    // ...</span>
+<span class="x">    Sentry\Laravel\ServiceProvider::class,</span>
+<span class="x">],</span>
+
+<span class="x">// config/sentry.php</span>
+<span class="x">&#39;dsn&#39; =&gt; env(&#39;SENTRY_LARAVEL_DSN&#39;),</span>
+<span class="x">&#39;breadcrumbs&#39; =&gt; [</span>
+<span class="x">    &#39;logs&#39; =&gt; true,</span>
+<span class="x">    &#39;sql_queries&#39; =&gt; true,</span>
+<span class="x">    &#39;sql_bindings&#39; =&gt; true,</span>
+<span class="x">    &#39;queue_info&#39; =&gt; true,</span>
+<span class="x">    &#39;command_info&#39; =&gt; true,</span>
+<span class="x">],</span>
+</code></pre></div>
+
+<h2 id="performance-optimization_1">Performance Optimization</h2>
+<h3 id="caching-strategies">Caching Strategies</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Cache configuration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>config:cache
+
+<span class="c1"># Cache routes</span>
+php<span class="w"> </span>artisan<span class="w"> </span>route:cache
+
+<span class="c1"># Cache views</span>
+php<span class="w"> </span>artisan<span class="w"> </span>view:cache
+
+<span class="c1"># Cache events</span>
+php<span class="w"> </span>artisan<span class="w"> </span>event:cache
+</code></pre></div>
+
+<h3 id="database-optimization">Database Optimization</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Add indexes for better performance</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_users_email</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">users</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_posts_user_id</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">posts</span><span class="p">(</span><span class="n">user_id</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_posts_created_at</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">posts</span><span class="p">(</span><span class="n">created_at</span><span class="p">);</span>
+
+<span class="c1">-- Optimize tables</span>
+<span class="n">OPTIMIZE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="p">;</span>
+<span class="n">OPTIMIZE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">posts</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="queue-configuration">Queue Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/queue.php</span>
+<span class="x">&#39;default&#39; =&gt; env(&#39;QUEUE_CONNECTION&#39;, &#39;redis&#39;),</span>
+<span class="x">&#39;connections&#39; =&gt; [</span>
+<span class="x">    &#39;redis&#39; =&gt; [</span>
+<span class="x">        &#39;driver&#39; =&gt; &#39;redis&#39;,</span>
+<span class="x">        &#39;connection&#39; =&gt; &#39;default&#39;,</span>
+<span class="x">        &#39;queue&#39; =&gt; env(&#39;REDIS_QUEUE&#39;, &#39;default&#39;),</span>
+<span class="x">        &#39;retry_after&#39; =&gt; 90,</span>
+<span class="x">        &#39;block_for&#39; =&gt; null,</span>
+<span class="x">        &#39;after_commit&#39; =&gt; false,</span>
+<span class="x">    ],</span>
+<span class="x">],</span>
+</code></pre></div>
+
+<h2 id="sslhttps-configuration">SSL/HTTPS Configuration</h2>
+<h3 id="lets-encrypt-ssl">Let's Encrypt SSL</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Certbot</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>certbot<span class="w"> </span>python3-certbot-nginx
+
+<span class="c1"># Obtain SSL certificate</span>
+sudo<span class="w"> </span>certbot<span class="w"> </span>--nginx<span class="w"> </span>-d<span class="w"> </span>yourdomain.com<span class="w"> </span>-d<span class="w"> </span>www.yourdomain.com
+
+<span class="c1"># Auto-renewal</span>
+sudo<span class="w"> </span>crontab<span class="w"> </span>-e
+<span class="c1"># Add: 0 12 * * * /usr/bin/certbot renew --quiet</span>
+</code></pre></div>
+
+<h3 id="nginx-ssl-configuration">Nginx SSL Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">yourdomain.com</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/yourdomain.com/fullchain.pem</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/yourdomain.com/privkey.pem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_protocols</span><span class="w"> </span><span class="s">TLSv1.2</span><span class="w"> </span><span class="s">TLSv1.3</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_ciphers</span><span class="w"> </span><span class="s">ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_prefer_server_ciphers</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># HSTS</span>
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Strict-Transport-Security</span><span class="w"> </span><span class="s">&quot;max-age=63072000&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/your-app/public</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="nv">$uri/</span><span class="w"> </span><span class="s">/index.php?</span><span class="nv">$query_string</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">unix:/var/run/php/php8.1-fpm.sock</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_param</span><span class="w"> </span><span class="s">SCRIPT_FILENAME</span><span class="w"> </span><span class="nv">$realpath_root$fastcgi_script_name</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">include</span><span class="w"> </span><span class="s">fastcgi_params</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Redirect HTTP to HTTPS</span>
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">yourdomain.com</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$server_name$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="backup-strategies">Backup Strategies</h2>
+<h3 id="database-backups">Database Backups</h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># backup.sh</span>
+
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span>
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/backups/database&quot;</span>
+<span class="nv">DB_NAME</span><span class="o">=</span><span class="s2">&quot;your_database&quot;</span>
+<span class="nv">DB_USER</span><span class="o">=</span><span class="s2">&quot;your_username&quot;</span>
+
+<span class="c1"># Create backup directory</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$BACKUP_DIR</span>
+
+<span class="c1"># Create backup</span>
+mysqldump<span class="w"> </span>-u<span class="w"> </span><span class="nv">$DB_USER</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$DB_NAME</span><span class="w"> </span>&gt;<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/backup_<span class="nv">$DATE</span>.sql
+
+<span class="c1"># Compress backup</span>
+gzip<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/backup_<span class="nv">$DATE</span>.sql
+
+<span class="c1"># Keep only last 7 days of backups</span>
+find<span class="w"> </span><span class="nv">$BACKUP_DIR</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;backup_*.sql.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+7<span class="w"> </span>-delete
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Backup completed: backup_</span><span class="nv">$DATE</span><span class="s2">.sql.gz&quot;</span>
+</code></pre></div>
+
+<h3 id="file-backups">File Backups</h3>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># file_backup.sh</span>
+
+<span class="nv">DATE</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span>
+<span class="nv">BACKUP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/backups/files&quot;</span>
+<span class="nv">APP_DIR</span><span class="o">=</span><span class="s2">&quot;/var/www/your-app&quot;</span>
+
+<span class="c1"># Create backup directory</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$BACKUP_DIR</span>
+
+<span class="c1"># Create backup of storage directory</span>
+tar<span class="w"> </span>-czf<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/storage_backup_<span class="nv">$DATE</span>.tar.gz<span class="w"> </span>-C<span class="w"> </span><span class="nv">$APP_DIR</span><span class="w"> </span>storage
+
+<span class="c1"># Create backup of public directory</span>
+tar<span class="w"> </span>-czf<span class="w"> </span><span class="nv">$BACKUP_DIR</span>/public_backup_<span class="nv">$DATE</span>.tar.gz<span class="w"> </span>-C<span class="w"> </span><span class="nv">$APP_DIR</span><span class="w"> </span>public
+
+<span class="c1"># Keep only last 7 days of backups</span>
+find<span class="w"> </span><span class="nv">$BACKUP_DIR</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*_backup_*.tar.gz&quot;</span><span class="w"> </span>-mtime<span class="w"> </span>+7<span class="w"> </span>-delete
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;File backup completed&quot;</span>
+</code></pre></div>
+
+<h2 id="troubleshooting-common-issues">Troubleshooting Common Issues</h2>
+<h3 id="permission-issues">Permission Issues</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Fix storage permissions</span>
+sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+sudo<span class="w"> </span>chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>storage<span class="w"> </span>bootstrap/cache
+
+<span class="c1"># Fix log permissions</span>
+sudo<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>www-data:www-data<span class="w"> </span>storage/logs
+sudo<span class="w"> </span>chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>storage/logs
+</code></pre></div>
+
+<h3 id="memory-issues">Memory Issues</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Increase PHP memory limit</span>
+sudo<span class="w"> </span>nano<span class="w"> </span>/etc/php/8.1/fpm/php.ini
+<span class="c1"># memory_limit = 512M</span>
+
+<span class="c1"># Increase PHP-FPM memory</span>
+sudo<span class="w"> </span>nano<span class="w"> </span>/etc/php/8.1/fpm/php-fpm.conf
+<span class="c1"># pm.max_children = 50</span>
+<span class="c1"># pm.start_servers = 5</span>
+<span class="c1"># pm.min_spare_servers = 5</span>
+<span class="c1"># pm.max_spare_servers = 35</span>
+</code></pre></div>
+
+<h3 id="database-connection-issues">Database Connection Issues</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check MySQL status</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>mysql
+
+<span class="c1"># Check MySQL logs</span>
+sudo<span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>/var/log/mysql/error.log
+
+<span class="c1"># Test database connection</span>
+mysql<span class="w"> </span>-u<span class="w"> </span>your_username<span class="w"> </span>-p<span class="w"> </span>-h<span class="w"> </span>your_host<span class="w"> </span>your_database
+</code></pre></div>
+
+<h2 id="deployment-best-practices">Deployment Best Practices</h2>
+<h3 id="1-use-environment-variables">1. Use Environment Variables</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Never commit sensitive data</span>
+<span class="c1"># Use .env files for configuration</span>
+<span class="nv">APP_KEY</span><span class="o">=</span>base64:your-key-here
+<span class="nv">DB_PASSWORD</span><span class="o">=</span>your-secure-password
+<span class="nv">MAIL_PASSWORD</span><span class="o">=</span>your-email-password
+</code></pre></div>
+
+<h3 id="2-implement-zero-downtime-deployment">2. Implement Zero-Downtime Deployment</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Use blue-green deployment</span>
+<span class="c1"># Deploy to new server</span>
+<span class="c1"># Switch traffic when ready</span>
+<span class="c1"># Keep old server as backup</span>
+</code></pre></div>
+
+<h3 id="3-monitor-application-health">3. Monitor Application Health</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Set up health checks</span>
+<span class="c1"># Monitor error rates</span>
+<span class="c1"># Track response times</span>
+<span class="c1"># Set up alerts</span>
+</code></pre></div>
+
+<h3 id="4-regular-maintenance">4. Regular Maintenance</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Update dependencies regularly</span>
+<span class="c1"># Monitor security patches</span>
+<span class="c1"># Clean up old logs</span>
+<span class="c1"># Optimize database</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Pre-deployment checklist and preparation</li>
+<li>✅ Different deployment methods (traditional, Forge, Vapor, Docker)</li>
+<li>✅ CI/CD pipeline setup</li>
+<li>✅ Environment-specific configurations</li>
+<li>✅ Monitoring and logging strategies</li>
+<li>✅ Performance optimization techniques</li>
+<li>✅ SSL/HTTPS configuration</li>
+<li>✅ Backup strategies</li>
+<li>✅ Troubleshooting common issues</li>
+<li>✅ Deployment best practices</li>
+</ul>
+<p>Deployment is the final step in bringing your Laravel application to production. With proper planning and execution, you can ensure a smooth and reliable deployment process.</p>
+<p>Congratulations! You've completed the Laravel: From Zero to Production book. You now have a comprehensive understanding of Laravel development and are ready to build and deploy production-ready applications.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/12-deployment.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="11-testing.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="13-caching.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

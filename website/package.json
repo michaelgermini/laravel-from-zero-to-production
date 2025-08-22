@@ -1,0 +1,78 @@
+{
+  "name": "laravel-book-website",
+  "version": "1.0.0",
+  "description": "Laravel: From Zero to Production - Official Website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=8000 --open=/",
+    "build": "npm run clean && npm run copy && npm run minify",
+    "clean": "rm -rf dist && mkdir dist",
+    "copy": "cp -r *.html *.css *.js dist/",
+    "minify": "npm run minify:css && npm run minify:js",
+    "minify:css": "cleancss -o dist/styles.css styles.css",
+    "minify:js": "uglifyjs script.js -o dist/script.js",
+    "deploy:github": "npm run build && gh-pages -d dist",
+    "deploy:netlify": "npm run build && netlify deploy --dir=dist --prod",
+    "deploy:vercel": "npm run build && vercel --prod dist",
+    "deploy:s3": "npm run build && aws s3 sync dist s3://your-bucket-name --delete",
+    "serve": "npm run build && serve -s dist -l 8000",
+    "test": "npm run build && npm run serve",
+    "lint": "eslint *.js",
+    "format": "prettier --write *.html *.css *.js"
+  },
+  "keywords": [
+    "laravel",
+    "php",
+    "web-development",
+    "tutorial",
+    "documentation",
+    "book"
+  ],
+  "author": "Laravel Book Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/laravel-book.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/laravel-book/issues"
+  },
+  "homepage": "https://yourusername.github.io/laravel-book",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.0",
+    "eslint": "^8.0.0",
+    "gh-pages": "^5.0.0",
+    "live-server": "^1.2.2",
+    "prettier": "^2.8.0",
+    "serve": "^14.2.0",
+    "uglify-js": "^3.17.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "@fortawesome/fontawesome-free": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "config": {
+    "deploy": {
+      "github": {
+        "branch": "gh-pages",
+        "repo": "yourusername/laravel-book"
+      },
+      "netlify": {
+        "site": "your-site-id"
+      },
+      "s3": {
+        "bucket": "your-bucket-name",
+        "region": "us-east-1"
+      }
+    }
+  }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Projects Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item active">Projects</li>
+                    </ol>
+                </nav>
+
+                <h1 class="display-4 text-gradient mb-4">
+                    <i class="fas fa-code"></i> All Projects
+                </h1>
+                
+                <p class="lead mb-5">Real-world applications to practice your Laravel skills.</p>
+
+                <!-- Beginner Projects -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h2 class="h3 mb-4 text-success">
+                            <i class="fas fa-seedling"></i> Beginner Projects
+                        </h2>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card project-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">Todo Application</h5>
+                                <p class="card-text">Basic CRUD operations with Laravel</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-success">Beginner</span>
+                                    <span class="badge bg-secondary">2-4 hours</span>
+                                </div>
+                                <a href="todo-app.html" class="btn btn-primary">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intermediate Projects -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h2 class="h3 mb-4 text-warning">
+                            <i class="fas fa-tree"></i> Intermediate Projects
+                        </h2>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card project-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-blog fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">Blog Platform</h5>
+                                <p class="card-text">Content management with user authentication</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning">Intermediate</span>
+                                    <span class="badge bg-secondary">4-8 hours</span>
+                                </div>
+                                <a href="blog-platform.html" class="btn btn-success">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card project-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-code fa-3x text-info mb-3"></i>
+                                <h5 class="card-title">REST API</h5>
+                                <p class="card-text">Building RESTful APIs with Laravel</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning">Intermediate</span>
+                                    <span class="badge bg-secondary">4-8 hours</span>
+                                </div>
+                                <a href="rest-api.html" class="btn btn-info">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Projects -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h2 class="h3 mb-4 text-danger">
+                            <i class="fas fa-fire"></i> Advanced Projects
+                        </h2>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card project-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-3x text-warning mb-3"></i>
+                                <h5 class="card-title">E-commerce Shop</h5>
+                                <p class="card-text">Online store with payment integration</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-danger">Advanced</span>
+                                    <span class="badge bg-secondary">8-16 hours</span>
+                                </div>
+                                <a href="shop-app.html" class="btn btn-warning">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card project-card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-magic fa-3x text-danger mb-3"></i>
+                                <h5 class="card-title">Multi-Step Wizard</h5>
+                                <p class="card-text">Complex form handling with validation</p>
+                                <div class="mb-3">
+                                    <span class="badge bg-danger">Advanced</span>
+                                    <span class="badge bg-secondary">8-16 hours</span>
+                                </div>
+                                <a href="wizard-form.html" class="btn btn-danger">View Project</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Learning Path -->
+                <div class="card mb-5">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-road"></i> Recommended Learning Path</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-1 text-primary"></i> Start Here</h5>
+                                <p>Begin with the Todo Application to learn basic CRUD operations and Laravel fundamentals.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-2 text-success"></i> Build Skills</h5>
+                                <p>Move to Blog Platform or REST API to learn authentication, relationships, and API development.</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5><i class="fas fa-3 text-warning"></i> Master Laravel</h5>
+                                <p>Tackle advanced projects like E-commerce Shop or Multi-Step Wizard for complex applications.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technologies Used -->
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <h4><i class="fas fa-tools"></i> Technologies You'll Learn</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <i class="fab fa-php fa-2x text-primary mb-2"></i>
+                                <h6>Laravel Framework</h6>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <i class="fas fa-database fa-2x text-success mb-2"></i>
+                                <h6>MySQL/PostgreSQL</h6>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <i class="fab fa-bootstrap fa-2x text-info mb-2"></i>
+                                <h6>Bootstrap 5</h6>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <i class="fab fa-js-square fa-2x text-warning mb-2"></i>
+                                <h6>JavaScript</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="../index.html" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                    <a href="../chapters/01-introduction.html" class="btn btn-primary ms-2">
+                        <i class="fas fa-book"></i> Start Learning
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

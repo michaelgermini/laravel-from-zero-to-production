@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 09-auth: Authentication - Laravel: From Zero to Production</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        .markdown-content {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .markdown-content h1 {
+            color: #ff2d20;
+            border-bottom: 3px solid #ff2d20;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .markdown-content h2 {
+            color: #636b6f;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .markdown-content h3 {
+            color: #495057;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .markdown-content h4 {
+            color: #6c757d;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .markdown-content p {
+            margin-bottom: 1.2rem;
+        }
+        .markdown-content ul, .markdown-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        .markdown-content blockquote {
+            border-left: 4px solid #ff2d20;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-style: italic;
+        }
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #ff2d20;
+            color: white;
+            font-weight: bold;
+        }
+        .markdown-content tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .markdown-content strong {
+            font-weight: 600;
+            color: #495057;
+        }
+        .markdown-content em {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fab fa-laravel"></i> Laravel Book
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#chapters">Chapters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html#projects">Projects</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Chapter Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="../index.html#chapters">Chapters</a></li>
+                        <li class="breadcrumb-item active">Chapter 09-auth: Authentication</li>
+                    </ol>
+                </nav>
+
+                <article class="chapter-content">
+                    <h1 class="display-4 text-gradient mb-4">
+                        <i class="fas fa-user-shield"></i> Chapter 09-auth: Authentication
+                    </h1>
+                    
+                    
+        <div class="markdown-content">
+            <h1 id="chapter-9-authentication-authorization">Chapter 9: Authentication &amp; Authorization</h1>
+<h2 id="what-is-authentication">What is Authentication?</h2>
+<p>Authentication is the process of verifying who a user is, while authorization is the process of determining what a user can access. Laravel provides a complete authentication system that includes user registration, login, password reset, email verification, and more.</p>
+<h2 id="laravel-authentication-packages">Laravel Authentication Packages</h2>
+<h3 id="laravel-breeze">Laravel Breeze</h3>
+<p>Laravel Breeze provides a minimal and simple authentication implementation:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Laravel Breeze</span>
+composer<span class="w"> </span>require<span class="w"> </span>laravel/breeze<span class="w"> </span>--dev
+
+<span class="c1"># Install Breeze with default stack</span>
+php<span class="w"> </span>artisan<span class="w"> </span>breeze:install
+
+<span class="c1"># Install with specific stack</span>
+php<span class="w"> </span>artisan<span class="w"> </span>breeze:install<span class="w"> </span>blade
+php<span class="w"> </span>artisan<span class="w"> </span>breeze:install<span class="w"> </span>react
+php<span class="w"> </span>artisan<span class="w"> </span>breeze:install<span class="w"> </span>vue
+php<span class="w"> </span>artisan<span class="w"> </span>breeze:install<span class="w"> </span>api
+</code></pre></div>
+
+<h3 id="laravel-jetstream">Laravel Jetstream</h3>
+<p>Laravel Jetstream provides a more robust authentication system with additional features:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Laravel Jetstream</span>
+composer<span class="w"> </span>require<span class="w"> </span>laravel/jetstream
+
+<span class="c1"># Install with Livewire</span>
+php<span class="w"> </span>artisan<span class="w"> </span>jetstream:install<span class="w"> </span>livewire
+
+<span class="c1"># Install with Inertia.js</span>
+php<span class="w"> </span>artisan<span class="w"> </span>jetstream:install<span class="w"> </span>inertia
+</code></pre></div>
+
+<h3 id="laravel-fortify">Laravel Fortify</h3>
+<p>Laravel Fortify provides backend authentication services:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install Laravel Fortify</span>
+composer<span class="w"> </span>require<span class="w"> </span>laravel/fortify
+
+<span class="c1"># Publish configuration</span>
+php<span class="w"> </span>artisan<span class="w"> </span>vendor:publish<span class="w"> </span>--provider<span class="o">=</span><span class="s2">&quot;Laravel\Fortify\FortifyServiceProvider&quot;</span>
+</code></pre></div>
+
+<h2 id="basic-authentication-setup">Basic Authentication Setup</h2>
+<h3 id="user-model">User Model</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Models</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\User</span> <span class="k">as</span> <span class="nx">Authenticatable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Notifications\Notifiable</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Laravel\Sanctum\HasApiTokens</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="k">extends</span> <span class="nx">Authenticatable</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">HasApiTokens</span><span class="p">,</span> <span class="nx">Notifiable</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$fillable</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;email&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="k">protected</span> <span class="nv">$hidden</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;remember_token&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+
+    <span class="k">protected</span> <span class="nv">$casts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;email_verified_at&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hashed&#39;</span><span class="p">,</span>
+    <span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="authentication-configuration">Authentication Configuration</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/auth.php</span>
+<span class="x">return [</span>
+<span class="x">    &#39;defaults&#39; =&gt; [</span>
+<span class="x">        &#39;guard&#39; =&gt; &#39;web&#39;,</span>
+<span class="x">        &#39;passwords&#39; =&gt; &#39;users&#39;,</span>
+<span class="x">    ],</span>
+
+<span class="x">    &#39;guards&#39; =&gt; [</span>
+<span class="x">        &#39;web&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;session&#39;,</span>
+<span class="x">            &#39;provider&#39; =&gt; &#39;users&#39;,</span>
+<span class="x">        ],</span>
+<span class="x">        &#39;api&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;sanctum&#39;,</span>
+<span class="x">            &#39;provider&#39; =&gt; &#39;users&#39;,</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+
+<span class="x">    &#39;providers&#39; =&gt; [</span>
+<span class="x">        &#39;users&#39; =&gt; [</span>
+<span class="x">            &#39;driver&#39; =&gt; &#39;eloquent&#39;,</span>
+<span class="x">            &#39;model&#39; =&gt; App\Models\User::class,</span>
+<span class="x">        ],</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<h2 id="authentication-controllers">Authentication Controllers</h2>
+<h3 id="login-controller">Login Controller</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Auth</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Providers\RouteServiceProvider</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\AuthenticatesUsers</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">LoginController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">AuthenticatesUsers</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$redirectTo</span> <span class="o">=</span> <span class="nx">RouteServiceProvider</span><span class="o">::</span><span class="na">HOME</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">except</span><span class="p">(</span><span class="s1">&#39;logout&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">authenticated</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;admin.dashboard&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">intended</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">redirectPath</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">loggedOut</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">redirect</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">route</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;You have been successfully logged out.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="register-controller">Register Controller</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Auth</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Providers\RouteServiceProvider</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\RegistersUsers</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Hash</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Validator</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">RegisterController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">RegistersUsers</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$redirectTo</span> <span class="o">=</span> <span class="nx">RouteServiceProvider</span><span class="o">::</span><span class="na">HOME</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">validator</span><span class="p">(</span><span class="k">array</span> <span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Validator</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;max:255&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;max:255&#39;</span><span class="p">,</span> <span class="s1">&#39;unique:users&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;min:8&#39;</span><span class="p">,</span> <span class="s1">&#39;confirmed&#39;</span><span class="p">],</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">function</span> <span class="nf">create</span><span class="p">(</span><span class="k">array</span> <span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">User</span><span class="o">::</span><span class="na">create</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">Hash</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]),</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="authentication-routes">Authentication Routes</h2>
+<h3 id="web-routes">Web Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/web.php</span>
+<span class="x">use App\Http\Controllers\Auth\LoginController;</span>
+<span class="x">use App\Http\Controllers\Auth\RegisterController;</span>
+
+<span class="x">// Authentication Routes</span>
+<span class="x">Route::middleware(&#39;guest&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::get(&#39;login&#39;, [LoginController::class, &#39;showLoginForm&#39;])-&gt;name(&#39;login&#39;);</span>
+<span class="x">    Route::post(&#39;login&#39;, [LoginController::class, &#39;login&#39;]);</span>
+
+<span class="x">    Route::get(&#39;register&#39;, [RegisterController::class, &#39;showRegistrationForm&#39;])-&gt;name(&#39;register&#39;);</span>
+<span class="x">    Route::post(&#39;register&#39;, [RegisterController::class, &#39;register&#39;]);</span>
+<span class="x">});</span>
+
+<span class="x">Route::middleware(&#39;auth&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::post(&#39;logout&#39;, [LoginController::class, &#39;logout&#39;])-&gt;name(&#39;logout&#39;);</span>
+<span class="x">    Route::get(&#39;profile&#39;, [ProfileController::class, &#39;show&#39;])-&gt;name(&#39;profile&#39;);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h3 id="api-routes">API Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/api.php</span>
+<span class="x">use App\Http\Controllers\Auth\AuthController;</span>
+
+<span class="x">Route::post(&#39;login&#39;, [AuthController::class, &#39;login&#39;]);</span>
+<span class="x">Route::post(&#39;register&#39;, [AuthController::class, &#39;register&#39;]);</span>
+
+<span class="x">Route::middleware(&#39;auth:sanctum&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::post(&#39;logout&#39;, [AuthController::class, &#39;logout&#39;]);</span>
+<span class="x">    Route::get(&#39;user&#39;, [AuthController::class, &#39;user&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="manual-authentication">Manual Authentication</h2>
+<h3 id="logging-in">Logging In</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Auth;</span>
+
+<span class="x">// Attempt to log in</span>
+<span class="x">if (Auth::attempt([&#39;email&#39; =&gt; $email, &#39;password&#39; =&gt; $password])) {</span>
+<span class="x">    // Authentication successful</span>
+<span class="x">    return redirect()-&gt;intended(&#39;/dashboard&#39;);</span>
+<span class="x">}</span>
+
+<span class="x">// Attempt with additional conditions</span>
+<span class="x">if (Auth::attempt([&#39;email&#39; =&gt; $email, &#39;password&#39; =&gt; $password, &#39;active&#39; =&gt; 1])) {</span>
+<span class="x">    // User is active and credentials are correct</span>
+<span class="x">}</span>
+
+<span class="x">// Remember user</span>
+<span class="x">if (Auth::attempt([&#39;email&#39; =&gt; $email, &#39;password&#39; =&gt; $password], $remember)) {</span>
+<span class="x">    // User will be remembered</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="logging-out">Logging Out</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Auth;</span>
+
+<span class="x">// Log out the current user</span>
+<span class="x">Auth::logout();</span>
+
+<span class="x">// Log out and invalidate session</span>
+<span class="x">Auth::logout();</span>
+<span class="x">$request-&gt;session()-&gt;invalidate();</span>
+<span class="x">$request-&gt;session()-&gt;regenerateToken();</span>
+</code></pre></div>
+
+<h3 id="checking-authentication-status">Checking Authentication Status</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Auth;</span>
+
+<span class="x">// Check if user is authenticated</span>
+<span class="x">if (Auth::check()) {</span>
+<span class="x">    // User is logged in</span>
+<span class="x">}</span>
+
+<span class="x">// Get current user</span>
+<span class="x">$user = Auth::user();</span>
+
+<span class="x">// Get user ID</span>
+<span class="x">$userId = Auth::id();</span>
+
+<span class="x">// Check if user is guest</span>
+<span class="x">if (Auth::guest()) {</span>
+<span class="x">    // User is not logged in</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h2 id="password-reset">Password Reset</h2>
+<h3 id="password-reset-controller">Password Reset Controller</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Auth</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\SendsPasswordResetEmails</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\ResetsPasswords</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ForgotPasswordController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">SendsPasswordResetEmails</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">ResetPasswordController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">ResetsPasswords</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$redirectTo</span> <span class="o">=</span> <span class="s1">&#39;/home&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="password-reset-routes">Password Reset Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/web.php</span>
+<span class="x">use App\Http\Controllers\Auth\ForgotPasswordController;</span>
+<span class="x">use App\Http\Controllers\Auth\ResetPasswordController;</span>
+
+<span class="x">Route::get(&#39;password/reset&#39;, [ForgotPasswordController::class, &#39;showLinkRequestForm&#39;])</span>
+<span class="x">    -&gt;name(&#39;password.request&#39;);</span>
+<span class="x">Route::post(&#39;password/email&#39;, [ForgotPasswordController::class, &#39;sendResetLinkEmail&#39;])</span>
+<span class="x">    -&gt;name(&#39;password.email&#39;);</span>
+
+<span class="x">Route::get(&#39;password/reset/{token}&#39;, [ResetPasswordController::class, &#39;showResetForm&#39;])</span>
+<span class="x">    -&gt;name(&#39;password.reset&#39;);</span>
+<span class="x">Route::post(&#39;password/reset&#39;, [ResetPasswordController::class, &#39;reset&#39;])</span>
+<span class="x">    -&gt;name(&#39;password.update&#39;);</span>
+</code></pre></div>
+
+<h3 id="custom-password-reset">Custom Password Reset</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Password;</span>
+<span class="x">use Illuminate\Support\Facades\Hash;</span>
+
+<span class="x">// Send password reset link</span>
+<span class="x">$status = Password::sendResetLink($request-&gt;only(&#39;email&#39;));</span>
+
+<span class="x">// Reset password</span>
+<span class="x">$status = Password::reset($request-&gt;only(&#39;email&#39;, &#39;password&#39;, &#39;password_confirmation&#39;, &#39;token&#39;), function ($user, $password) {</span>
+<span class="x">    $user-&gt;forceFill([</span>
+<span class="x">        &#39;password&#39; =&gt; Hash::make($password)</span>
+<span class="x">    ])-&gt;save();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="email-verification">Email Verification</h2>
+<h3 id="enabling-email-verification">Enabling Email Verification</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User model</span>
+<span class="x">use Illuminate\Contracts\Auth\MustVerifyEmail;</span>
+
+<span class="x">class User extends Authenticatable implements MustVerifyEmail</span>
+<span class="x">{</span>
+<span class="x">    // ...</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="email-verification-controller">Email Verification Controller</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Auth</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Foundation\Auth\VerifiesEmails</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">VerificationController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">use</span> <span class="nx">VerifiesEmails</span><span class="p">;</span>
+
+    <span class="k">protected</span> <span class="nv">$redirectTo</span> <span class="o">=</span> <span class="s1">&#39;/home&#39;</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;signed&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">(</span><span class="s1">&#39;verify&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">middleware</span><span class="p">(</span><span class="s1">&#39;throttle:6,1&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">(</span><span class="s1">&#39;verify&#39;</span><span class="p">,</span> <span class="s1">&#39;resend&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="email-verification-routes">Email Verification Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/web.php</span>
+<span class="x">use App\Http\Controllers\Auth\VerificationController;</span>
+
+<span class="x">Route::get(&#39;email/verify&#39;, [VerificationController::class, &#39;show&#39;])</span>
+<span class="x">    -&gt;name(&#39;verification.notice&#39;);</span>
+<span class="x">Route::get(&#39;email/verify/{id}/{hash}&#39;, [VerificationController::class, &#39;verify&#39;])</span>
+<span class="x">    -&gt;name(&#39;verification.verify&#39;);</span>
+<span class="x">Route::post(&#39;email/resend&#39;, [VerificationController::class, &#39;resend&#39;])</span>
+<span class="x">    -&gt;name(&#39;verification.resend&#39;);</span>
+</code></pre></div>
+
+<h2 id="authorization">Authorization</h2>
+<h3 id="gates">Gates</h3>
+<p>Gates are simple closures that determine if a user is authorized to perform a given action:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// In AuthServiceProvider</span>
+<span class="x">use Illuminate\Support\Facades\Gate;</span>
+
+<span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    Gate::define(&#39;update-post&#39;, function (User $user, Post $post) {</span>
+<span class="x">        return $user-&gt;id === $post-&gt;user_id;</span>
+<span class="x">    });</span>
+
+<span class="x">    Gate::define(&#39;delete-post&#39;, function (User $user, Post $post) {</span>
+<span class="x">        return $user-&gt;id === $post-&gt;user_id || $user-&gt;isAdmin();</span>
+<span class="x">    });</span>
+
+<span class="x">    Gate::define(&#39;admin-access&#39;, function (User $user) {</span>
+<span class="x">        return $user-&gt;role === &#39;admin&#39;;</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="using-gates">Using Gates</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Gate;</span>
+
+<span class="x">// Check if user can perform action</span>
+<span class="x">if (Gate::allows(&#39;update-post&#39;, $post)) {</span>
+<span class="x">    // User can update the post</span>
+<span class="x">}</span>
+
+<span class="x">// Check if user cannot perform action</span>
+<span class="x">if (Gate::denies(&#39;delete-post&#39;, $post)) {</span>
+<span class="x">    abort(403);</span>
+<span class="x">}</span>
+
+<span class="x">// Check for any user</span>
+<span class="x">if (Gate::forUser($user)-&gt;allows(&#39;update-post&#39;, $post)) {</span>
+<span class="x">    // Specific user can update the post</span>
+<span class="x">}</span>
+
+<span class="x">// In Blade templates</span>
+<span class="x">@can(&#39;update-post&#39;, $post)</span>
+<span class="x">    &lt;a href=&quot;{{ route(&#39;posts.edit&#39;, $post) }}&quot;&gt;Edit&lt;/a&gt;</span>
+<span class="x">@endcan</span>
+
+<span class="x">@cannot(&#39;delete-post&#39;, $post)</span>
+<span class="x">    &lt;p&gt;You cannot delete this post.&lt;/p&gt;</span>
+<span class="x">@endcannot</span>
+</code></pre></div>
+
+<h3 id="policies">Policies</h3>
+<p>Policies are classes that organize authorization logic around a particular model:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create policy</span>
+php<span class="w"> </span>artisan<span class="w"> </span>make:policy<span class="w"> </span>PostPolicy<span class="w"> </span>--model<span class="o">=</span>Post
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Policies</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\Post</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">PostPolicy</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">viewAny</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// Anyone can view posts</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">view</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nx">Post</span> <span class="nv">$post</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span> <span class="c1">// Anyone can view a specific post</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isVerified</span><span class="p">();</span> <span class="c1">// Only verified users can create posts</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">update</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nx">Post</span> <span class="nv">$post</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">===</span> <span class="nv">$post</span><span class="o">-&gt;</span><span class="na">user_id</span> <span class="o">||</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">delete</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nx">Post</span> <span class="nv">$post</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">===</span> <span class="nv">$post</span><span class="o">-&gt;</span><span class="na">user_id</span> <span class="o">||</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">restore</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nx">Post</span> <span class="nv">$post</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">forceDelete</span><span class="p">(</span><span class="nx">User</span> <span class="nv">$user</span><span class="p">,</span> <span class="nx">Post</span> <span class="nv">$post</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">isAdmin</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="registering-policies">Registering Policies</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In AuthServiceProvider</span>
+<span class="x">protected $policies = [</span>
+<span class="x">    Post::class =&gt; PostPolicy::class,</span>
+<span class="x">    Comment::class =&gt; CommentPolicy::class,</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<h3 id="using-policies">Using Policies</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">use Illuminate\Support\Facades\Gate;</span>
+
+<span class="x">// Check authorization</span>
+<span class="x">if (Gate::allows(&#39;update&#39;, $post)) {</span>
+<span class="x">    // User can update the post</span>
+<span class="x">}</span>
+
+<span class="x">// Authorize action (throws exception if not authorized)</span>
+<span class="x">Gate::authorize(&#39;update&#39;, $post);</span>
+
+<span class="x">// In controllers</span>
+<span class="x">public function update(Request $request, Post $post)</span>
+<span class="x">{</span>
+<span class="x">    $this-&gt;authorize(&#39;update&#39;, $post);</span>
+
+<span class="x">    // Update the post</span>
+<span class="x">}</span>
+
+<span class="x">// In Blade templates</span>
+<span class="x">@can(&#39;update&#39;, $post)</span>
+<span class="x">    &lt;a href=&quot;{{ route(&#39;posts.edit&#39;, $post) }}&quot;&gt;Edit&lt;/a&gt;</span>
+<span class="x">@endcan</span>
+</code></pre></div>
+
+<h2 id="role-based-authorization">Role-Based Authorization</h2>
+<h3 id="user-roles">User Roles</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// User model</span>
+<span class="x">class User extends Authenticatable</span>
+<span class="x">{</span>
+<span class="x">    public function hasRole($role)</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;role === $role;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function hasAnyRole($roles)</span>
+<span class="x">    {</span>
+<span class="x">        return in_array($this-&gt;role, (array) $roles);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function hasAllRoles($roles)</span>
+<span class="x">    {</span>
+<span class="x">        return empty(array_diff((array) $roles, [$this-&gt;role]));</span>
+<span class="x">    }</span>
+
+<span class="x">    public function isAdmin()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;hasRole(&#39;admin&#39;);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function isModerator()</span>
+<span class="x">    {</span>
+<span class="x">        return $this-&gt;hasRole(&#39;moderator&#39;);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="role-middleware">Role Middleware</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Middleware</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Closure</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">CheckRole</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">Closure</span> <span class="nv">$next</span><span class="p">,</span> <span class="o">...</span><span class="nv">$roles</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">hasAnyRole</span><span class="p">(</span><span class="nv">$roles</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">,</span> <span class="s1">&#39;Unauthorized action.&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nv">$next</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="using-role-middleware">Using Role Middleware</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/web.php</span>
+<span class="x">Route::middleware([&#39;auth&#39;, &#39;role:admin&#39;])-&gt;group(function () {</span>
+<span class="x">    Route::get(&#39;/admin&#39;, [AdminController::class, &#39;index&#39;]);</span>
+<span class="x">});</span>
+
+<span class="x">Route::middleware([&#39;auth&#39;, &#39;role:admin,moderator&#39;])-&gt;group(function () {</span>
+<span class="x">    Route::get(&#39;/moderate&#39;, [ModerationController::class, &#39;index&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="api-authentication-with-sanctum">API Authentication with Sanctum</h2>
+<h3 id="installing-sanctum">Installing Sanctum</h3>
+<div class="codehilite"><pre><span></span><code>composer<span class="w"> </span>require<span class="w"> </span>laravel/sanctum
+php<span class="w"> </span>artisan<span class="w"> </span>vendor:publish<span class="w"> </span>--provider<span class="o">=</span><span class="s2">&quot;Laravel\Sanctum\SanctumServiceProvider&quot;</span>
+php<span class="w"> </span>artisan<span class="w"> </span>migrate
+</code></pre></div>
+
+<h3 id="api-authentication-controller">API Authentication Controller</h3>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">namespace</span> <span class="nx">App\Http\Controllers\Auth</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">App\Http\Controllers\Controller</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">App\Models\User</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Http\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Hash</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Validation\ValidationException</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">AuthController</span> <span class="k">extends</span> <span class="nx">Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">register</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|max:255&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|email|max:255|unique:users&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|string|min:8|confirmed&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">create</span><span class="p">([</span>
+            <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="nx">Hash</span><span class="o">::</span><span class="na">make</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">password</span><span class="p">),</span>
+        <span class="p">]);</span>
+
+        <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">createToken</span><span class="p">(</span><span class="s1">&#39;auth_token&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plainTextToken</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+            <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">,</span>
+            <span class="s1">&#39;token&#39;</span> <span class="o">=&gt;</span> <span class="nv">$token</span><span class="p">,</span>
+        <span class="p">],</span> <span class="mi">201</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">login</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">validate</span><span class="p">([</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required|email&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;required&#39;</span><span class="p">,</span>
+        <span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Auth</span><span class="o">::</span><span class="na">attempt</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">only</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="nx">ValidationException</span><span class="o">::</span><span class="na">withMessages</span><span class="p">([</span>
+                <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;The provided credentials are incorrect.&#39;</span><span class="p">],</span>
+            <span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nx">User</span><span class="o">::</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">firstOrFail</span><span class="p">();</span>
+        <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">createToken</span><span class="p">(</span><span class="s1">&#39;auth_token&#39;</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">plainTextToken</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+            <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">,</span>
+            <span class="s1">&#39;token&#39;</span> <span class="o">=&gt;</span> <span class="nv">$token</span><span class="p">,</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">logout</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">currentAccessToken</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Logged out successfully&#39;</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">user</span><span class="p">(</span><span class="nx">Request</span> <span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">response</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">user</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="api-routes_1">API Routes</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// routes/api.php</span>
+<span class="x">Route::post(&#39;register&#39;, [AuthController::class, &#39;register&#39;]);</span>
+<span class="x">Route::post(&#39;login&#39;, [AuthController::class, &#39;login&#39;]);</span>
+
+<span class="x">Route::middleware(&#39;auth:sanctum&#39;)-&gt;group(function () {</span>
+<span class="x">    Route::post(&#39;logout&#39;, [AuthController::class, &#39;logout&#39;]);</span>
+<span class="x">    Route::get(&#39;user&#39;, [AuthController::class, &#39;user&#39;]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<h2 id="authentication-best-practices">Authentication Best Practices</h2>
+<h3 id="1-use-strong-passwords">1. Use Strong Passwords</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In validation rules</span>
+<span class="x">&#39;password&#39; =&gt; [</span>
+<span class="x">    &#39;required&#39;,</span>
+<span class="x">    &#39;string&#39;,</span>
+<span class="x">    &#39;min:8&#39;,</span>
+<span class="x">    &#39;regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&amp;])[A-Za-z\d@$!%*?&amp;]{8,}$/&#39;,</span>
+<span class="x">    &#39;confirmed&#39;,</span>
+<span class="x">],</span>
+</code></pre></div>
+
+<h3 id="2-implement-rate-limiting">2. Implement Rate Limiting</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In routes</span>
+<span class="x">Route::post(&#39;login&#39;, [LoginController::class, &#39;login&#39;])</span>
+<span class="x">    -&gt;middleware(&#39;throttle:5,1&#39;); // 5 attempts per minute</span>
+
+<span class="x">Route::post(&#39;password/email&#39;, [ForgotPasswordController::class, &#39;sendResetLinkEmail&#39;])</span>
+<span class="x">    -&gt;middleware(&#39;throttle:3,1&#39;); // 3 attempts per minute</span>
+</code></pre></div>
+
+<h3 id="3-use-https-in-production">3. Use HTTPS in Production</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In AppServiceProvider</span>
+<span class="x">public function boot()</span>
+<span class="x">{</span>
+<span class="x">    if (app()-&gt;environment(&#39;production&#39;)) {</span>
+<span class="x">        \URL::forceScheme(&#39;https&#39;);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="4-implement-two-factor-authentication">4. Implement Two-Factor Authentication</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Using Laravel Fortify</span>
+<span class="x">composer require laravel/fortify</span>
+<span class="x">php artisan vendor:publish --provider=&quot;Laravel\Fortify\FortifyServiceProvider&quot;</span>
+</code></pre></div>
+
+<h3 id="5-log-authentication-events">5. Log Authentication Events</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// In EventServiceProvider</span>
+<span class="x">protected $listen = [</span>
+<span class="x">    &#39;Illuminate\Auth\Events\Login&#39; =&gt; [</span>
+<span class="x">        &#39;App\Listeners\LogSuccessfulLogin&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">    &#39;Illuminate\Auth\Events\Failed&#39; =&gt; [</span>
+<span class="x">        &#39;App\Listeners\LogFailedLogin&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">    &#39;Illuminate\Auth\Events\Logout&#39; =&gt; [</span>
+<span class="x">        &#39;App\Listeners\LogSuccessfulLogout&#39;,</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<h2 id="summary">Summary</h2>
+<p>In this chapter, we covered:</p>
+<ul>
+<li>✅ Laravel authentication packages (Breeze, Jetstream, Fortify)</li>
+<li>✅ Basic authentication setup and configuration</li>
+<li>✅ Authentication controllers and routes</li>
+<li>✅ Manual authentication methods</li>
+<li>✅ Password reset functionality</li>
+<li>✅ Email verification</li>
+<li>✅ Authorization with Gates and Policies</li>
+<li>✅ Role-based authorization</li>
+<li>✅ API authentication with Sanctum</li>
+<li>✅ Authentication best practices</li>
+</ul>
+<p>Authentication and authorization are crucial for securing your Laravel application. In the next chapter, we'll explore events and queues for handling background tasks.</p>
+        </div>
+        
+
+                    <!-- Markdown Source Link -->
+                    <div class="card mt-4">
+                        <div class="card-body text-center">
+                            <p class="mb-2">
+                                <i class="fas fa-file-markdown text-primary"></i>
+                                <strong>View Source:</strong>
+                            </p>
+                            <a href="../docs/09-auth.md" class="btn btn-outline-primary" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Open Markdown File
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="../index.html" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Back to Home
+                        </a>
+                        <div>
+                            <a href="08-middleware.html" class="btn btn-outline-secondary me-2"><i class="fas fa-arrow-left"></i> Previous</a>
+                            <a href="10-events-queues.html" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Laravel: From Zero to Production. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
